@@ -1,0 +1,16 @@
+Table: goods
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=商家用户ID关联user.id
+goodsId | VARCHAR(50) | NULLABLE=NO | COMMENT=商品编号商户下的商品序号
+addressId | INT(10) | NULLABLE=NO | COMMENT=发货地址ID关联address.id
+preId | INT(10) | NULLABLE=YES | COMMENT=先前的商品ID
+goodsName | VARCHAR(100) | NULLABLE=NO | COMMENT=商品名称
+describe | VARCHAR(1024) | NULLABLE=NO | COMMENT=商品简介
+goodsPrice | DECIMAL(10,2) | NULLABLE=NO | DEFAULT=0.00 | COMMENT=商品单价保留两位小数
+goodsStock | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=商品库存数量
+imagePath | VARCHAR(500) | NULLABLE=NO | DEFAULT= | COMMENT=商品图片路径URL
+launch | TINYINT(3) | NULLABLE=NO | DEFAULT=0 | COMMENT=上架状态:0-下架1-上架
+createTime | DATETIME(19) | NULLABLE=NO | DEFAULT=CURRENT_TIMESTAMP | COMMENT=发布时间
+delete | TINYINT(3) | NULLABLE=NO | DEFAULT=0 | COMMENT=逻辑删除:0-未删除1-已删除
+version | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=乐观锁版本号
+PK: id

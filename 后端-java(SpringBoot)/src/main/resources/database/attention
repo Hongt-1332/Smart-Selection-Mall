@@ -1,0 +1,21 @@
+================================
+ 数据库命名规范
+================================
+
+1. 数据库、表名: 小写英文 (user, address, cart, goods, trade)
+
+2. 表字段: Java 小驼峰命名
+   - userId, goodsName, createTime, deleteFlag  (正确)
+   - user_id, goods_name, create_time            (错误)
+
+3. Java 实体字段: 与数据库列名保持完全一致
+   - 数据库: deleteFlag  →  Java: delete  (别名映射)
+   - 其余字段名保持完全一致
+
+4. 逻辑删除字段统一用: deleteFlag
+   - 值为 0 表示未删除, 1 表示已删除
+   - Java 实体字段映射为 delete
+
+5. 时间字段统一用: createTime, payTime, cancelTime, finishTime
+   - 类型: DATETIME / LocalDateTime
+   - 默认值: CURRENT_TIMESTAMP

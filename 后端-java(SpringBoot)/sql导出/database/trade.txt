@@ -1,0 +1,17 @@
+Table: trade
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+orderId | VARCHAR(50) | NULLABLE=NO | COMMENT=订单号唯一标识一笔订单
+userId | INT(10) | NULLABLE=NO | COMMENT=买家用户ID关联user.id
+goodId | INT(10) | NULLABLE=NO | COMMENT=商品ID关联goods.id
+quantity | INT(10) | NULLABLE=NO | DEFAULT=1 | COMMENT=购买数量
+originAddress | VARCHAR(255) | NULLABLE=NO | COMMENT=发货地址
+currentAddress | VARCHAR(255) | NULLABLE=YES | COMMENT=当前地址
+targetAddress | VARCHAR(255) | NULLABLE=NO | COMMENT=目标地址
+createTime | DATETIME(19) | NULLABLE=NO | DEFAULT=CURRENT_TIMESTAMP | COMMENT=下单时间
+payTime | DATETIME(19) | NULLABLE=YES | COMMENT=支付时间NULL表示未支付
+cancelTime | DATETIME(19) | NULLABLE=YES | COMMENT=取消时间NULL表示未取消
+finishTime | DATETIME(19) | NULLABLE=YES | COMMENT=完成时间NULL表示未完成
+delete | TINYINT(3) | NULLABLE=NO | DEFAULT=0 | COMMENT=逻辑删除:0-未删除1-已删除
+--- 说明: totalPrice 由 SQL 查询时通过 goodsPrice * quantity 实时计算，非物理列
+--- singlePrice 已废弃
+PK: id

@@ -1,0 +1,25 @@
+Table: user
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userName | VARCHAR(20) | NULLABLE=NO | COMMENT=用户名用于显示和登录
+account | VARCHAR(20) | NULLABLE=NO | COMMENT=登录账号唯一标识
+password | VARCHAR(255) | NULLABLE=NO | COMMENT=登录密码加密存储
+salt | VARCHAR(50) | NULLABLE=NO | DEFAULT= | COMMENT=密码盐值用于加密
+role | VARCHAR(20) | NULLABLE=NO | DEFAULT=user | COMMENT=角色: user(普通用户), merchant(商家), admin(管理员)
+wechatOpenid | VARCHAR(64) | NULLABLE=YES | COMMENT=微信小程序openid唯一标识
+defaultAddressId | INT(10) | NULLABLE=YES | COMMENT=默认地址Id
+balance | DECIMAL(10,2) | NULLABLE=NO | DEFAULT=0.00 | COMMENT=账户余额保留两位小数
+email | VARCHAR(64) | NULLABLE=NO | COMMENT=邮箱
+phone | VARCHAR(17) | NULLABLE=NO | COMMENT=手机号
+describe | VARCHAR(255) | NULLABLE=YES | COMMENT=个人描述
+avatarPath | VARCHAR(500) | NULLABLE=YES | COMMENT=头像路径
+imagePath | VARCHAR(500) | NULLABLE=YES | COMMENT=用户图片路径
+level | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=VIP等级:0-普通 1-月度VIP 2-年度VIP
+vipCreateTime | DATETIME(19) | NULLABLE=YES | COMMENT=VIP开通时间
+vipDuration | INT(10) | NULLABLE=YES | COMMENT=VIP持续天数
+createTime | DATETIME(19) | NULLABLE=NO | DEFAULT=CURRENT_TIMESTAMP | COMMENT=注册时间
+delete | TINYINT(3) | NULLABLE=NO | DEFAULT=0 | COMMENT=逻辑删除:0-未删除1-已删除
+uploadTime | DATETIME(19) | NULLABLE=YES | COMMENT=上传时间
+updateAvatar | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=当月已更新头像次数
+uploadBackground | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=当月已更新背景次数
+uploadGoods | INT(10) | NULLABLE=NO | DEFAULT=0 | COMMENT=当月已更新商品次数
+PK: id

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.vipmapper.VipGoodsMapper">
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Goods">
+        SELECT id, userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`
+        FROM goods
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.goodsId != null">AND goodsId = #{entity.goodsId}</if>
+            <if test="entity.addressId != null">AND addressId = #{entity.addressId}</if>
+            <if test="entity.preId != null">AND preId = #{entity.preId}</if>
+            <if test="entity.goodsName != null">AND goodsName = #{entity.goodsName}</if>
+            <if test="entity.describe != null">AND `describe` = #{entity.describe}</if>
+            <if test="entity.goodsPrice != null">AND goodsPrice = #{entity.goodsPrice}</if>
+            <if test="entity.goodsStock != null">AND goodsStock = #{entity.goodsStock}</if>
+            <if test="entity.imagePath != null">AND imagePath = #{entity.imagePath}</if>
+            <if test="entity.launch != null">AND launch = #{entity.launch}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+    <select id="selectByIds" resultType="edu.fafu.database.dto.response.user.UserGoods">
+        SELECT g.id, g.userId, g.goodsId, g.addressId, g.goodsName, g.`describe`, g.goodsPrice, g.goodsStock,
+               g.imagePath, g.launch, g.createTime, g.`delete`,
+               u.userName, u.avatarPath AS merchantAvatar, u.id AS merchantId,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address,
+               CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS inCart,
+               CASE WHEN c.id IS NOT NULL THEN c.quantity ELSE 0 END AS cartQuantity
+        FROM goods g
+        LEFT JOIN user u ON g.userId = u.id
+        LEFT JOIN address ad ON g.addressId = ad.id
+        LEFT JOIN cart c ON c.goodId = g.id AND c.userId = #{userId}
+        WHERE g.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND g.launch = 1 AND g.`delete` = 0
+    </select>
+
+
+</mapper>

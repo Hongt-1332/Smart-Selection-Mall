@@ -1,0 +1,6 @@
+Table: upload
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+createTime | DATETIME(19) | NULLABLE=NO | COMMENT=创建时间
+updateTimes | DATETIME(19) | NULLABLE=NO | COMMENT=最后更新时间
+PK: id

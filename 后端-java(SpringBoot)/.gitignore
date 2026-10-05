@@ -1,0 +1,47 @@
+﻿# Maven
+target/
+*.jar
+*.war
+*.zip
+*.tar.gz
+effective-pom.xml
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+*.class
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Logs
+*.log
+
+# Temp
+temp/
+*.tmp
+
+# Env
+*.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Auto-generated docs/tools
+apidocument/
+permission/
+
+# Secrets & cookies
+cookies.txt
+wechat_pay_*.md

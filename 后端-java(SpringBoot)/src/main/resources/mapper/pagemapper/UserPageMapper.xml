@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.pagemapper.UserPageMapper">
+
+    <select id="selectUserList" resultType="edu.fafu.database.dto.response.user.UserUser">
+        SELECT u.id, u.userName, u.account, u.phone, u.email, u.balance, u.avatarPath, u.level,
+               u.vipCreateTime, u.vipDuration, u.createTime, u.uploadTime, u.uploadBackground, u.uploadGoods, u.updateAvatar, u.`delete`,
+               u.`describe`,
+               vc.levelName AS vipLevelName,
+               GREATEST(0, DATEDIFF(DATE_ADD(u.vipCreateTime, INTERVAL u.vipDuration DAY), NOW())) AS vipRemainingTime,
+               vc.maxAddressQuantity, vc.monthlyUpdateGoods, vc.monthlyUpdateAvatar,
+               vc.monthlyUpdateBackground, vc.maxCartQuantity, vc.maxGoodsQuantity,
+               vc.maxAiQuantity
+        FROM user u
+        LEFT JOIN vipconfig vc ON u.level = vc.level
+        <where>
+            <if test="entity.id != null">AND u.id = #{entity.id}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectAddressList" resultType="edu.fafu.database.dto.response.user.UserAddress">
+        SELECT a.id, a.userId, a.addressId, a.country, a.province, a.city, a.county, a.detail, a.createTime, a.`delete`,
+               u.userName
+        FROM address a
+        LEFT JOIN user u ON a.userId = u.id
+        <where>
+            a.`delete` = 0
+            <if test="entity.userId != null">AND a.userId = #{entity.userId}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectCartList" resultType="edu.fafu.database.dto.response.user.UserCart">
+        SELECT c.id AS cartId, g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.describe, g.goodsPrice, g.goodsStock,
+               g.imagePath, g.launch, g.createTime, g.`delete`,
+               c.quantity,
+               u.userName, u.avatarPath AS merchantAvatar, u.id AS merchantId,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address
+        FROM cart c
+        LEFT JOIN goods g ON c.goodId = g.id
+        LEFT JOIN user u ON g.userId = u.id
+        LEFT JOIN address ad ON g.addressId = ad.id
+        <where>
+            <if test="entity.userId != null">AND c.userId = #{entity.userId}</if>
+        </where>
+    </select>
+
+    <select id="selectGoodsList" resultType="edu.fafu.database.dto.response.user.UserGoods">
+    SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.`describe`, g.goodsPrice, g.goodsStock,
+           g.imagePath, g.launch, g.createTime, g.`delete`,
+           u.userName, u.avatarPath AS merchantAvatar, u.id AS merchantId,
+           CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address,
+           CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS inCart,
+           CASE WHEN c.id IS NOT NULL THEN c.quantity ELSE 0 END AS cartQuantity
+    FROM goods g
+    LEFT JOIN user u ON g.userId = u.id
+    LEFT JOIN address ad ON g.addressId = ad.id
+    LEFT JOIN cart c ON c.goodId = g.id AND c.userId = #{entity.userId}
+    <where>
+        g.launch = 1 AND g.`delete` = 0
+        <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+        <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+        <if test="entity.priceMin != null">AND g.goodsPrice &gt;= #{entity.priceMin}</if>
+        <if test="entity.priceMax != null">AND g.goodsPrice &lt;= #{entity.priceMax}</if>
+    </where>
+    
+</select>
+
+    <select id="selectTradeList" resultType="edu.fafu.database.dto.response.user.UserTrade">
+        SELECT t.id, t.orderId, t.userId, t.goodId, t.quantity, t.originAddress, t.currentAddress, t.targetAddress,
+               t.createTime, t.payTime, t.cancelTime, t.finishTime, t.`delete`,
+               m.userName AS merchantName, g.goodsName, g.goodsPrice,
+               (g.goodsPrice * t.quantity) AS totalPrice
+        FROM trade t
+        LEFT JOIN goods g ON t.goodId = g.id
+        LEFT JOIN user m ON g.userId = m.id
+        <where>
+            t.`delete` = 0
+            <if test="entity.userId != null">AND t.userId = #{entity.userId}</if>
+            <if test="entity.merchantName != null and entity.merchantName != ''">AND m.userName LIKE CONCAT('%', #{entity.merchantName}, '%')</if>
+            <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+            <if test="entity.createTimeStart != null">AND t.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND t.createTime &lt;= #{entity.createTimeEnd}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectBackgroundList" resultType="edu.fafu.database.dto.response.user.UserBackground">
+        SELECT b.id, b.userId, b.imagePath, b.sequence, b.createTime,
+               u.`describe`
+        FROM background b
+        LEFT JOIN user u ON b.userId = u.id
+        <where>
+            <if test="entity.userId != null">AND b.userId = #{entity.userId}</if>
+        </where>
+        ORDER BY b.sequence ASC
+    </select>
+
+    <select id="selectVipConfigList" resultType="edu.fafu.database.dto.response.user.UserVipConfig">
+        SELECT level, levelName, maxAddressQuantity, monthlyUpdateGoods, monthlyUpdateAvatar, monthlyUpdateBackground,
+               maxCartQuantity, maxGoodsQuantity, maxAiQuantity, price, vipDuration, createTime
+        FROM vipconfig
+        ORDER BY level ASC
+    </select>
+
+    <select id="selectVipTradeList" resultType="edu.fafu.database.dto.response.user.UserVipTrade">
+        SELECT vt.id, vt.userId, vt.level, vt.money, vt.num, vt.createTime,
+               vt.num AS quantity,
+               vc.vipDuration AS addedTime,
+               DATE_ADD(u.vipCreateTime, INTERVAL u.vipDuration DAY) AS vipExpireTime
+        FROM viptrade vt
+        LEFT JOIN user u ON vt.userId = u.id
+        LEFT JOIN vipconfig vc ON vt.level = vc.level
+        <where>
+            <if test="entity.userId != null">AND vt.userId = #{entity.userId}</if>
+        </where>
+        
+    </select>
+
+
+    <select id="selectCartCount" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="selectGoodsByIds" resultType="edu.fafu.database.dto.response.user.UserGoods">
+        SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.`describe`, g.goodsPrice, g.goodsStock,
+               g.imagePath, g.launch, g.createTime, g.`delete`,
+               u.userName, u.avatarPath AS merchantAvatar, u.id AS merchantId,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address,
+               CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS inCart,
+               CASE WHEN c.id IS NOT NULL THEN c.quantity ELSE 0 END AS cartQuantity
+        FROM goods g
+        LEFT JOIN user u ON g.userId = u.id
+        LEFT JOIN address ad ON g.addressId = ad.id
+        LEFT JOIN cart c ON c.goodId = g.id AND c.userId = #{userId}
+        WHERE g.launch = 1 AND g.`delete` = 0
+        AND g.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectUserBackgroundInfo" resultType="edu.fafu.database.dto.response.user.UserBackgroundVO">
+        SELECT u.userName, u.`describe`, u.level, vc.levelName
+        FROM user u
+        LEFT JOIN vipconfig vc ON u.level = vc.level
+        WHERE u.id = #{userId} AND u.`delete` = 0
+    </select>
+
+    <select id="selectUserBackgroundImages" resultType="edu.fafu.database.dto.response.user.UserBackgroundVO$BackgroundImage">
+        SELECT imagePath, sequence
+        FROM background
+        WHERE userId = #{userId}
+        ORDER BY sequence ASC
+    </select>
+
+    <select id="selectUserBackgroundGoods" resultType="edu.fafu.database.dto.response.user.UserBackgroundVO$UserBackgroundGoods">
+        SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.`describe`, g.goodsPrice, g.goodsStock,
+               g.imagePath, g.launch, g.createTime,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address
+        FROM goods g
+        LEFT JOIN address ad ON g.addressId = ad.id
+        WHERE g.userId = #{userId} AND g.launch = 1 AND g.`delete` = 0
+        ORDER BY g.id DESC
+    </select>
+
+</mapper>

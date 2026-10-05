@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.usermapper.UserUserMapper">
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (defaultAddressId, userName, account, password, salt, phone, `describe`, email, balance,
+                          wechatOpenid, avatarPath, level, vipCreateTime, createTime, `delete`, uploadTime,
+                          uploadBackground, uploadGoods, updateAvatar)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.defaultAddressId}, #{item.userName}, #{item.account}, #{item.password}, #{item.salt}, #{item.phone},
+             #{item.describe}, #{item.email}, #{item.balance}, #{item.wechatOpenid}, #{item.avatarPath},
+             #{item.level}, #{item.vipCreateTime}, #{item.createTime}, #{item.delete},
+             #{item.uploadTime}, #{item.uploadBackground}, #{item.uploadGoods}, #{item.updateAvatar})
+        </foreach>
+    </insert>
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE user
+            <set>
+                <if test="item.defaultAddressId != null">defaultAddressId = #{item.defaultAddressId},</if>
+                <if test="item.userName != null">userName = #{item.userName},</if>
+                <if test="item.account != null">account = #{item.account},</if>
+                <if test="item.password != null">password = #{item.password},</if>
+                <if test="item.salt != null">salt = #{item.salt},</if>
+                <if test="item.phone != null">phone = #{item.phone},</if>
+                <if test="item.describe != null">`describe` = #{item.describe},</if>
+                <if test="item.email != null">email = #{item.email},</if>
+                <if test="item.balance != null">balance = #{item.balance},</if>
+                <if test="item.wechatOpenid != null">wechatOpenid = #{item.wechatOpenid},</if>
+                <if test="item.avatarPath != null">avatarPath = #{item.avatarPath},</if>
+                <if test="item.level != null">level = #{item.level},</if>
+                <if test="item.vipCreateTime != null">vipCreateTime = #{item.vipCreateTime},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+                <if test="item.uploadTime != null">uploadTime = #{item.uploadTime},</if>
+                <if test="item.uploadBackground != null">uploadBackground = #{item.uploadBackground},</if>
+                <if test="item.uploadGoods != null">uploadGoods = #{item.uploadGoods},</if>
+                <if test="item.updateAvatar != null">updateAvatar = #{item.updateAvatar},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <update id="clearAvatarPath">
+        UPDATE user SET avatarPath = NULL WHERE id = #{id}
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.User">
+        SELECT id, defaultAddressId, userName, account, password, salt, phone, `describe`, email, balance,
+               wechatOpenid, avatarPath, level, vipCreateTime, createTime, `delete`, uploadTime,
+               uploadBackground, uploadGoods, updateAvatar
+        FROM user
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.defaultAddressId != null">AND defaultAddressId = #{entity.defaultAddressId}</if>
+            <if test="entity.userName != null">AND userName = #{entity.userName}</if>
+            <if test="entity.account != null">AND account = #{entity.account}</if>
+            <if test="entity.password != null">AND password = #{entity.password}</if>
+            <if test="entity.salt != null">AND salt = #{entity.salt}</if>
+            <if test="entity.phone != null">AND phone = #{entity.phone}</if>
+            <if test="entity.describe != null">AND `describe` = #{entity.describe}</if>
+            <if test="entity.email != null">AND email = #{entity.email}</if>
+            <if test="entity.balance != null">AND balance = #{entity.balance}</if>
+            <if test="entity.wechatOpenid != null">AND wechatOpenid = #{entity.wechatOpenid}</if>
+            <if test="entity.avatarPath != null">AND avatarPath = #{entity.avatarPath}</if>
+            <if test="entity.level != null">AND level = #{entity.level}</if>
+            <if test="entity.vipCreateTime != null">AND vipCreateTime = #{entity.vipCreateTime}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+            <if test="entity.uploadTime != null">AND uploadTime = #{entity.uploadTime}</if>
+            <if test="entity.uploadBackground != null">AND uploadBackground = #{entity.uploadBackground}</if>
+            <if test="entity.uploadGoods != null">AND uploadGoods = #{entity.uploadGoods}</if>
+            <if test="entity.updateAvatar != null">AND updateAvatar = #{entity.updateAvatar}</if>
+        </where>
+    </select>
+
+    <select id="selectByIds" resultType="edu.fafu.database.entity.User">
+        SELECT id, defaultAddressId, userName, account, password, salt, phone, `describe`, email, balance,
+               wechatOpenid, avatarPath, level, vipCreateTime, createTime, `delete`, uploadTime,
+               uploadBackground, uploadGoods, updateAvatar
+        FROM user
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

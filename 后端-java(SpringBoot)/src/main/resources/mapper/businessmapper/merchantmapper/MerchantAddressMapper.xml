@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.merchantmapper.MerchantAddressMapper">
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Address">
+        SELECT id, userId, addressId, country, province, city, county, detail, createTime, `delete`
+        FROM address
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.addressId != null">AND addressId = #{entity.addressId}</if>
+            <if test="entity.country != null">AND country = #{entity.country}</if>
+            <if test="entity.province != null">AND province = #{entity.province}</if>
+            <if test="entity.city != null">AND city = #{entity.city}</if>
+            <if test="entity.county != null">AND county = #{entity.county}</if>
+            <if test="entity.detail != null">AND detail = #{entity.detail}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+</mapper>

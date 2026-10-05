@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerUserMapper">
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE user
+            <set>
+                <if test="item.userName != null">userName = #{item.userName},</if>
+                <if test="item.account != null">account = #{item.account},</if>
+                <if test="item.balance != null">balance = #{item.balance},</if>
+                <if test="item.wechatOpenid != null">wechatOpenid = #{item.wechatOpenid},</if>
+                <if test="item.email != null">email = #{item.email},</if>
+                <if test="item.phone != null">phone = #{item.phone},</if>
+                <if test="item.describe != null">`describe` = #{item.describe},</if>
+                <if test="item.level != null">level = #{item.level},</if>
+                avatarPath = #{item.avatarPath},
+                <if test="item.uploadTime != null">uploadTime = #{item.uploadTime},</if>
+                <if test="item.vipCreateTime != null">vipCreateTime = #{item.vipCreateTime},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+                <if test="item.uploadBackground != null">uploadBackground = #{item.uploadBackground},</if>
+                <if test="item.uploadGoods != null">uploadGoods = #{item.uploadGoods},</if>
+                <if test="item.updateAvatar != null">updateAvatar = #{item.updateAvatar},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <update id="clearAvatarPath">
+        UPDATE user SET avatarPath = NULL WHERE id = #{id}
+    </update>
+
+</mapper>

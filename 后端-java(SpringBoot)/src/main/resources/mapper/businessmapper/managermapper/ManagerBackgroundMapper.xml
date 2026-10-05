@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerBackgroundMapper">
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE background
+            <set>
+                <if test="item.imagePath != null">imagePath = #{item.imagePath},</if>                <if test="item.sequence != null">sequence = #{item.sequence},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

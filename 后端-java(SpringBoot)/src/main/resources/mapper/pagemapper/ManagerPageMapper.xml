@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.pagemapper.ManagerPageMapper">
+
+    <select id="selectUserList" resultType="edu.fafu.database.dto.response.manager.ManagerUser">
+        SELECT u.id, u.userName, u.account, u.phone, u.email, u.`describe`, u.balance, u.avatarPath, u.level,
+               u.vipCreateTime, u.vipDuration, u.createTime, u.uploadTime, u.uploadBackground, u.uploadGoods, u.updateAvatar, u.`delete`
+        FROM user u
+        <where>
+            <if test="entity.id != null">AND u.id = #{entity.id}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.account != null and entity.account != ''">AND u.account LIKE CONCAT('%', #{entity.account}, '%')</if>
+            <if test="entity.phone != null and entity.phone != ''">AND u.phone LIKE CONCAT('%', #{entity.phone}, '%')</if>
+            <if test="entity.email != null and entity.email != ''">AND u.email LIKE CONCAT('%', #{entity.email}, '%')</if>
+            <if test="entity.describe != null and entity.describe != ''">AND u.`describe` LIKE CONCAT('%', #{entity.describe}, '%')</if>
+            <if test="entity.avatarPath != null and entity.avatarPath != ''">AND u.avatarPath LIKE CONCAT('%', #{entity.avatarPath}, '%')</if>
+            <if test="entity.createTimeStart != null">AND u.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND u.createTime &lt;= #{entity.createTimeEnd}</if>
+            <if test="entity.level != null">AND u.level = #{entity.level}</if>
+            <if test="entity.delete != null">AND u.`delete` = #{entity.delete}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectAddressList" resultType="edu.fafu.database.dto.response.manager.ManagerAddress">
+        SELECT a.id, a.userId, a.addressId, a.country, a.province, a.city, a.county, a.detail, a.createTime, a.`delete`,
+               u.userName
+        FROM address a
+        LEFT JOIN user u ON a.userId = u.id
+        <where>
+            <if test="entity.id != null">AND a.id = #{entity.id}</if>
+            <if test="entity.userId != null">AND a.userId = #{entity.userId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.createTimeStart != null">AND a.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND a.createTime &lt;= #{entity.createTimeEnd}</if>
+            <if test="entity.delete != null">AND a.`delete` = #{entity.delete}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectCartList" resultType="edu.fafu.database.dto.response.manager.ManagerCart">
+        SELECT c.id, c.userId, c.goodId, c.quantity, c.createTime,
+               u.userName, g.goodsName, g.goodsPrice, g.imagePath, g.goodsStock, g.launch
+        FROM cart c
+        LEFT JOIN user u ON c.userId = u.id
+        LEFT JOIN goods g ON c.goodId = g.id
+        <where>
+            <if test="entity.id != null">AND c.id = #{entity.id}</if>
+            <if test="entity.userId != null">AND c.userId = #{entity.userId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+            <if test="entity.goodsStock != null">AND g.goodsStock = #{entity.goodsStock}</if>
+            <if test="entity.quantity != null">AND c.quantity = #{entity.quantity}</if>
+            <if test="entity.launch != null">AND g.launch = #{entity.launch}</if>
+            <if test="entity.createTimeStart != null">AND c.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND c.createTime &lt;= #{entity.createTimeEnd}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectGoodsList" resultType="edu.fafu.database.dto.response.manager.ManagerGoods">
+    SELECT g.id, u.userName, g.goodsName, CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address, g.goodsPrice, g.goodsStock, g.imagePath, g.launch, g.preId, g.createTime, g.`delete`, g.describe
+    FROM goods g
+    LEFT JOIN user u ON g.userId = u.id
+    LEFT JOIN address ad ON g.addressId = ad.id
+    <where>
+        <if test="entity.id != null">AND g.id = #{entity.id}</if>
+        <if test="entity.preId != null">AND g.preId = #{entity.preId}</if>
+        <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+        <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+        <if test="entity.priceStart != null">AND g.goodsPrice &gt;= #{entity.priceStart}</if>
+        <if test="entity.priceEnd != null">AND g.goodsPrice &lt;= #{entity.priceEnd}</if>
+        <if test="entity.address != null and entity.address != ''">AND CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) LIKE CONCAT('%', #{entity.address}, '%')</if>
+        <if test="entity.describe != null and entity.describe != ''">AND g.describe LIKE CONCAT('%', #{entity.describe}, '%')</if>
+        <if test="entity.createTimeStart != null">AND g.createTime &gt;= #{entity.createTimeStart}</if>
+        <if test="entity.createTimeEnd != null">AND g.createTime &lt;= #{entity.createTimeEnd}</if>
+        <if test="entity.launch != null">AND g.launch = #{entity.launch}</if>
+        <if test="entity.delete != null">AND g.`delete` = #{entity.delete}</if>
+    </where>
+    
+</select>
+
+    <select id="selectTradeList" resultType="edu.fafu.database.dto.response.manager.ManagerTrade">
+        SELECT t.id, t.orderId, t.userId, t.goodId, t.quantity, t.originAddress, t.currentAddress, t.targetAddress,
+               t.createTime, t.payTime, t.cancelTime, t.finishTime, t.`delete`,
+               u.userName, m.userName AS merchantName, g.goodsName, g.goodsPrice,
+               (g.goodsPrice * t.quantity) AS totalPrice
+        FROM trade t
+        LEFT JOIN user u ON t.userId = u.id
+        LEFT JOIN goods g ON t.goodId = g.id
+        LEFT JOIN user m ON g.userId = m.id
+        <where>
+            t.`delete` = 0
+            <if test="entity.id != null">AND t.id = #{entity.id}</if>
+            <if test="entity.userId != null">AND t.userId = #{entity.userId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.merchantName != null and entity.merchantName != ''">AND m.userName LIKE CONCAT('%', #{entity.merchantName}, '%')</if>
+            <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+            <if test="entity.originAddress != null and entity.originAddress != ''">AND t.originAddress LIKE CONCAT('%', #{entity.originAddress}, '%')</if>
+            <if test="entity.currentAddress != null and entity.currentAddress != ''">AND t.currentAddress LIKE CONCAT('%', #{entity.currentAddress}, '%')</if>
+            <if test="entity.targetAddress != null and entity.targetAddress != ''">AND t.targetAddress LIKE CONCAT('%', #{entity.targetAddress}, '%')</if>
+            <if test="entity.createTimeStart != null">AND t.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND t.createTime &lt;= #{entity.createTimeEnd}</if>
+            <if test="entity.payTimeStart != null">AND t.payTime &gt;= #{entity.payTimeStart}</if>
+            <if test="entity.payTimeEnd != null">AND t.payTime &lt;= #{entity.payTimeEnd}</if>
+            <if test="entity.cancelTimeStart != null">AND t.cancelTime &gt;= #{entity.cancelTimeStart}</if>
+            <if test="entity.cancelTimeEnd != null">AND t.cancelTime &lt;= #{entity.cancelTimeEnd}</if>
+            <if test="entity.finishTimeStart != null">AND t.finishTime &gt;= #{entity.finishTimeStart}</if>
+            <if test="entity.finishTimeEnd != null">AND t.finishTime &lt;= #{entity.finishTimeEnd}</if>
+            <if test="entity.delete != null">AND t.`delete` = #{entity.delete}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectVipConfigList" resultType="edu.fafu.database.dto.response.manager.ManagerVipConfig">
+        SELECT level, maxAddressQuantity, monthlyUpdateGoods, monthlyUpdateAvatar, monthlyUpdateBackground,
+               maxCartQuantity, maxGoodsQuantity, maxAiQuantity, price, vipDuration, createTime
+        FROM vipconfig
+        <where>
+            <if test="entity.level != null">AND u.level = #{entity.level}</if>
+            <if test="entity.maxAddressQuantity != null">AND maxAddressQuantity = #{entity.maxAddressQuantity}</if>
+            <if test="entity.monthlyUpdateGoods != null">AND monthlyUpdateGoods = #{entity.monthlyUpdateGoods}</if>
+            <if test="entity.monthlyUpdateAvatar != null">AND monthlyUpdateAvatar = #{entity.monthlyUpdateAvatar}</if>
+            <if test="entity.monthlyUpdateBackground != null">AND monthlyUpdateBackground = #{entity.monthlyUpdateBackground}</if>
+            <if test="entity.maxCartQuantity != null">AND maxCartQuantity = #{entity.maxCartQuantity}</if>
+            <if test="entity.maxGoodsQuantity != null">AND maxGoodsQuantity = #{entity.maxGoodsQuantity}</if>
+            <if test="entity.maxAiQuantity != null">AND maxAiQuantity = #{entity.maxAiQuantity}</if>
+            <if test="entity.price != null">AND price = #{entity.price}</if>
+        </where>
+        ORDER BY level ASC
+    </select>
+
+    <select id="selectVipTradeList" resultType="edu.fafu.database.dto.response.manager.ManagerVipTrade">
+        SELECT vt.id, vt.userId, vt.level, vt.money, vt.num, vt.createTime,
+               u.userName
+        FROM viptrade vt
+        LEFT JOIN user u ON vt.userId = u.id
+        <where>
+            <if test="entity.id != null">AND vt.id = #{entity.id}</if>
+            <if test="entity.userId != null">AND vt.userId = #{entity.userId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.level != null">AND vt.level = #{entity.level}</if>
+            <if test="entity.moneyStart != null">AND vt.money &gt;= #{entity.moneyStart}</if>
+            <if test="entity.moneyEnd != null">AND vt.money &lt;= #{entity.moneyEnd}</if>
+            <if test="entity.createTimeStart != null">AND vt.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND vt.createTime &lt;= #{entity.createTimeEnd}</if>
+            <if test="entity.delete != null">AND vt.`delete` = #{entity.delete}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectAiList" resultType="edu.fafu.database.dto.response.manager.ManagerAi">
+        SELECT a.id, a.userId, a.goodsId, a.category, a.kind, a.name, a.price, a.simpleDescription, a.features, a.createTime, a.`delete`,
+               u.userName
+        FROM ai a
+        LEFT JOIN user u ON a.userId = u.id
+        <where>
+            <if test="entity.id != null">AND a.id = #{entity.id}</if>
+            <if test="entity.userId != null">AND a.userId = #{entity.userId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.goodsId != null">AND a.goodsId = #{entity.goodsId}</if>
+            <if test="entity.category != null and entity.category != ''">AND a.category LIKE CONCAT('%', #{entity.category}, '%')</if>
+            <if test="entity.kind != null and entity.kind != ''">AND a.kind LIKE CONCAT('%', #{entity.kind}, '%')</if>
+            <if test="entity.name != null and entity.name != ''">AND a.name LIKE CONCAT('%', #{entity.name}, '%')</if>
+            <if test="entity.priceStart != null and entity.priceStart != ''">AND a.price &gt;= #{entity.priceStart}</if>
+            <if test="entity.priceEnd != null and entity.priceEnd != ''">AND a.price &lt;= #{entity.priceEnd}</if>
+            <if test="entity.simpleDescription != null and entity.simpleDescription != ''">AND a.simpleDescription LIKE CONCAT('%', #{entity.simpleDescription}, '%')</if>
+            <if test="entity.features != null and entity.features != ''">AND a.features LIKE CONCAT('%', #{entity.features}, '%')</if>
+            <if test="entity.createTimeStart != null">AND a.createTime &gt;= #{entity.createTimeStart}</if>
+            <if test="entity.createTimeEnd != null">AND a.createTime &lt;= #{entity.createTimeEnd}</if>
+            <if test="entity.delete != null">AND a.`delete` = #{entity.delete}</if>
+        </where>
+        
+    </select>
+
+
+    <select id="selectGoodsChain" resultType="edu.fafu.database.dto.response.manager.ManagerGoods">
+        WITH RECURSIVE backward AS (
+            SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.describe,
+                   g.goodsPrice, g.goodsStock, g.imagePath, g.launch, g.createTime, g.delete
+            FROM goods g
+            WHERE g.goodsId = #{goodsId} AND g.`delete` = 0
+            UNION ALL
+            SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.describe,
+                   g.goodsPrice, g.goodsStock, g.imagePath, g.launch, g.createTime, g.delete
+            FROM goods g
+            INNER JOIN backward b ON g.id = b.preId
+        ),
+        forward AS (
+            SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.describe,
+                   g.goodsPrice, g.goodsStock, g.imagePath, g.launch, g.createTime, g.delete
+            FROM goods g
+            WHERE g.goodsId = #{goodsId} AND g.`delete` = 0
+            UNION ALL
+            SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.describe,
+                   g.goodsPrice, g.goodsStock, g.imagePath, g.launch, g.createTime, g.delete
+            FROM goods g
+            INNER JOIN forward f ON g.preId = f.id
+        )
+        SELECT gc.id, u.userName, gc.goodsName,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address,
+               gc.goodsPrice, gc.goodsStock, gc.imagePath, gc.launch, gc.preId, gc.createTime, gc.delete, gc.describe
+        FROM (
+            SELECT * FROM backward
+            UNION
+            SELECT * FROM forward
+        ) gc
+        LEFT JOIN user u ON gc.userId = u.id
+        LEFT JOIN address ad ON gc.addressId = ad.id
+        ORDER BY gc.id ASC
+    </select>
+
+</mapper>

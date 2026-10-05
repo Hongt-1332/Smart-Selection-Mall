@@ -1,0 +1,7 @@
+Table: cart
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+goodId | INT(10) | NULLABLE=NO | COMMENT=商品ID关联goods.id
+quantity | INT(10) | NULLABLE=NO | DEFAULT=1 | COMMENT=商品数量
+createTime | DATETIME(19) | NULLABLE=NO | DEFAULT=CURRENT_TIMESTAMP | COMMENT=添加时间
+PK: id

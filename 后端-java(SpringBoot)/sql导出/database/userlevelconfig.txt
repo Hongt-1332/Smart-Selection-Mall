@@ -1,0 +1,8 @@
+Table: userlevelconfig
+level | INT(10) | NULLABLE=NO | COMMENT=用户等级
+updateMonthlyLimit | INT(10) | NULLABLE=NO | DEFAULT=100 | COMMENT=每月更新次数上限
+avatarIntervalDays | INT(10) | NULLABLE=NO | DEFAULT=7 | COMMENT=头像更新间隔天数
+cartMaxItems | INT(10) | NULLABLE=NO | DEFAULT=5 | COMMENT=购物车最大商品数
+goodsMaxListed | INT(10) | NULLABLE=NO | DEFAULT=5 | COMMENT=最大上架商品数
+createTime | DATETIME(19) | NULLABLE=YES | DEFAULT=CURRENT_TIMESTAMP | COMMENT=创建时间
+PK: level

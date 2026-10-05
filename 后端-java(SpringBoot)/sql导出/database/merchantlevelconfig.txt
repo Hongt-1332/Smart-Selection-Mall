@@ -1,0 +1,6 @@
+Table: merchantlevelconfig
+level | INT(10) | NULLABLE=NO | COMMENT=商户等级
+maxUpdatesPerPosition | INT(10) | NULLABLE=NO | DEFAULT=2 | COMMENT=每个位置最大更新次数
+updateIntervalDays | INT(10) | NULLABLE=NO | DEFAULT=30 | COMMENT=更新间隔天数
+createTime | DATETIME(19) | NULLABLE=YES | DEFAULT=CURRENT_TIMESTAMP | COMMENT=创建时间
+PK: level

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.merchantmapper.AiMapper">
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        <foreach collection="list" item="item" separator=";">
+            INSERT INTO ai
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                id, userId,
+                <if test="item.goodsId != null">goodsId,</if>
+                category, kind, name, price, simpleDescription, features, createTime, `delete`,
+            </trim>
+            <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+                #{item.id}, #{item.userId},
+                <if test="item.goodsId != null">#{item.goodsId},</if>
+                #{item.category}, #{item.kind}, #{item.name}, #{item.price}, #{item.simpleDescription}, #{item.features}, #{item.createTime}, #{item.delete},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE ai
+            <set>
+                <if test="item.category != null">category = #{item.category},</if>
+                <if test="item.kind != null">kind = #{item.kind},</if>
+                <if test="item.name != null">name = #{item.name},</if>
+                <if test="item.price != null">price = #{item.price},</if>
+                <if test="item.simpleDescription != null">simpleDescription = #{item.simpleDescription},</if>
+                <if test="item.features != null">features = #{item.features},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Ai">
+        SELECT id, userId, goodsId, category, kind, name, price, simpleDescription, features, createTime, `delete`
+        FROM ai
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.goodsId != null">AND goodsId = #{entity.goodsId}</if>
+            <if test="entity.category != null">AND category = #{entity.category}</if>
+            <if test="entity.kind != null">AND kind = #{entity.kind}</if>
+            <if test="entity.name != null">AND name = #{entity.name}</if>
+            <if test="entity.price != null">AND price = #{entity.price}</if>
+            <if test="entity.simpleDescription != null">AND simpleDescription = #{entity.simpleDescription}</if>
+            <if test="entity.features != null">AND features = #{entity.features}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+</mapper>

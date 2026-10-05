@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.usermapper.UserAddressMapper">
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO address (userId, addressId, country, province, city, county, detail, createTime, `delete`)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId}, #{item.addressId}, #{item.country}, #{item.province},
+             #{item.city}, #{item.county}, #{item.detail}, #{item.createTime}, #{item.delete})
+        </foreach>
+    </insert>
+
+    <delete id="deleteList">
+        DELETE FROM address WHERE id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE address
+            <set>
+                <if test="item.userId != null">userId = #{item.userId},</if>
+                <if test="item.addressId != null">addressId = #{item.addressId},</if>
+                <if test="item.country != null">country = #{item.country},</if>
+                <if test="item.province != null">province = #{item.province},</if>
+                <if test="item.city != null">city = #{item.city},</if>
+                <if test="item.county != null">county = #{item.county},</if>
+                <if test="item.detail != null">detail = #{item.detail},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Address">
+        SELECT id, userId, addressId, country, province, city, county, detail, createTime, `delete`
+        FROM address
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.addressId != null">AND addressId = #{entity.addressId}</if>
+            <if test="entity.country != null">AND country = #{entity.country}</if>
+            <if test="entity.province != null">AND province = #{entity.province}</if>
+            <if test="entity.city != null">AND city = #{entity.city}</if>
+            <if test="entity.county != null">AND county = #{entity.county}</if>
+            <if test="entity.detail != null">AND detail = #{entity.detail}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+    <select id="selectByIds" resultType="edu.fafu.database.entity.Address">
+        SELECT id, userId, addressId, country, province, city, county, detail, createTime, `delete`
+        FROM address
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

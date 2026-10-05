@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerConfigMapper">
+
+    <select id="selectAll" resultType="edu.fafu.database.entity.VipConfig">
+        SELECT level, maxAddressQuantity, monthlyUpdateGoods, monthlyUpdateAvatar, monthlyUpdateBackground,
+               maxCartQuantity, maxGoodsQuantity, maxAiQuantity, price, createTime
+        FROM vipconfig
+        ORDER BY level
+    </select>
+
+    <select id="selectByLevel" resultType="edu.fafu.database.entity.VipConfig">
+        SELECT level, maxAddressQuantity, monthlyUpdateGoods, monthlyUpdateAvatar, monthlyUpdateBackground,
+               maxCartQuantity, maxGoodsQuantity, maxAiQuantity, price, createTime
+        FROM vipconfig
+        WHERE level = #{level}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO vipconfig (level, maxAddressQuantity, monthlyUpdateGoods, monthlyUpdateAvatar, monthlyUpdateBackground,
+                               maxCartQuantity, maxGoodsQuantity, maxAiQuantity, price)
+        VALUES (#{entity.level}, #{entity.maxAddressQuantity}, #{entity.monthlyUpdateGoods}, #{entity.monthlyUpdateAvatar},
+                #{entity.monthlyUpdateBackground}, #{entity.maxCartQuantity}, #{entity.maxGoodsQuantity},
+                #{entity.maxAiQuantity}, #{entity.price})
+    </insert>
+
+    <update id="update">
+        UPDATE vipconfig
+        <set>
+            <if test="entity.monthlyUpdateGoods != null">monthlyUpdateGoods = #{entity.monthlyUpdateGoods},</if>
+            <if test="entity.monthlyUpdateAvatar != null">monthlyUpdateAvatar = #{entity.monthlyUpdateAvatar},</if>
+            <if test="entity.monthlyUpdateBackground != null">monthlyUpdateBackground = #{entity.monthlyUpdateBackground},</if>
+            <if test="entity.maxCartQuantity != null">maxCartQuantity = #{entity.maxCartQuantity},</if>
+            <if test="entity.maxGoodsQuantity != null">maxGoodsQuantity = #{entity.maxGoodsQuantity},</if>
+            <if test="entity.maxAiQuantity != null">maxAiQuantity = #{entity.maxAiQuantity},</if>
+            <if test="entity.maxAddressQuantity != null">maxAddressQuantity = #{entity.maxAddressQuantity},</if>
+            <if test="entity.price != null">price = #{entity.price},</if>
+        </set>
+        WHERE level = #{entity.level}
+    </update>
+
+</mapper>

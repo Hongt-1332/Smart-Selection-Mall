@@ -1,0 +1,152 @@
+# ==========================================
+# 服务器配置
+# ==========================================
+server:
+  port: 8081                        # 服务端口
+  address: 0.0.0.0                  # 监听地址，0.0.0.0 表示监听所有网卡
+  servlet:
+    encoding:
+      charset: UTF-8                # 请求/响应编码
+      enabled: true                 # 启用编码强制
+      force: true                   # 强制覆盖请求编码
+
+# ==========================================
+# Spring 核心配置
+# ==========================================
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/web?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&zeroDateTimeBehavior=CONVERT_TO_NULL
+    username: root
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  redis:
+    host: localhost                       # Redis 地址
+    port: 6379                            # Redis 端口
+    timeout: 3000ms                       # 连接超时
+  servlet:
+    multipart:
+      max-file-size: 10MB                 # 单个文件最大大小
+      max-request-size: 20MB              # 整个请求最大大小
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss          # 日期格式
+    time-zone: Asia/Shanghai                   # 时区
+    use-jackson2-defaults: false               # 不使用 Jackson2 默认值（Jackson3 默认日期为 ISO-8601 字符串）
+  thymeleaf:
+    check-template-location: false
+  devtools:
+    restart:
+      enabled: true                         # 开启热部署自动重启
+      additional-paths: src/main/java       # 监控额外路径
+      exclude: WEB-INF/**,target/**         # 排除不需要监控的路径
+    livereload:
+      enabled: true                         # 开启浏览器自动刷新
+
+# ==========================================
+# MyBatis-Plus 配置
+# ==========================================
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml   # Mapper XML 扫描路径
+  type-aliases-package: edu.fafu.database.entity # 实体类别名包
+  configuration:
+    map-underscore-to-camel-case: true           # 下划线转驼峰
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl  # SQL 日志走 SLF4J
+  global-config:
+    db-config:
+      id-type: auto                              # 主键自增
+      logic-delete-field: delete                  # 全局逻辑删除字段名
+      logic-delete-value: 1                       # 逻辑已删除值
+      logic-not-delete-value: 0                   # 逻辑未删除值
+
+# ==========================================
+# 日志级别
+# ==========================================
+logging:
+  level:
+    root: info
+    edu.fafu: info
+    edu.fafu.database.mapper: warn
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: error
+
+# ==========================================
+# Sa-Token 权限认证配置
+# ==========================================
+sa-token:
+  token-name: Authorization              # token 名称（与前端 Authorization 头对应）
+  token-style: uuid                       # token 风格（uuid / simple-uuid / random-32 / random-64 / random-128 / tik）
+  is-write-header: false                  # 是否将 token 写入响应头
+  is-read-header: true                    # 是否从请求头读取 token
+  is-read-cookie: false                   # 是否从 cookie 读取 token（本系统使用 header）
+  token-prefix: Bearer                    # token 前缀
+  timeout: 604800                         # token 有效期（秒），7天 = 7*24*60*60
+  active-timeout: -1                      # token 最低活跃频率（秒，-1 不限制）
+  is-concurrent: true                     # 是否允许同一账号并发登录
+  is-share: false                         # 是否共享 token
+  is-login-lock: false                    # 是否在登录时加锁
+  is-print: false                         # 是否打印 Sa-Token 启动 banner
+  is-log: false                           # 是否打印 Sa-Token 日志
+
+# ==========================================
+# 应用自定义配置
+# ==========================================
+app:
+  system:
+    token-expire-days: 7                          # Token 过期天数
+    token-secret: ${TOKEN_SECRET}                    # Token 签名密钥（必须通过环境变量注入，生产环境使用强随机长密钥）
+    path-crypto-seed: ${PATH_CRYPTO_SEED}            # 图片路径加密种子（必须通过环境变量注入，生产环境使用强随机长种子）
+    login-max-attempts: 5                         # 登录最大失败次数
+    login-window-sec: 60                          # 登录失败计数窗口（秒）
+    file-base-dir: "C:/file"                      # 文件存储根目录
+    file-max-upload-size-mb: 10                   # 文件上传最大大小（MB）
+    image-base-dir: "C:/image"                    # 图片存储根目录
+    image-allowed-ext: ".jpg.jpeg.png.gif.webp"   # 允许的图片扩展名
+    image-max-size-mb: 5                          # 图片上传最大大小（MB）
+    image-batch-max: 50                           # 批量上传图片最大数量
+    trade-cancel-timeout-minutes: 30              # 买家取消订单超时（分钟）
+    trade-merchant-cancel-timeout-hours: 1        # 商户取消订单超时（小时）
+    goods-min-price: 0.01                         # 商品最低单价
+    captcha-width: 120                            # 验证码图片宽度（像素）
+    captcha-height: 40                            # 验证码图片高度（像素）
+    captcha-code-length: 4                        # 验证码字符长度
+    user-max-addresses: 5                         # 用户最大收货地址数
+    user-update-count-expire-days: 32             # 用户信息修改次数过期天数
+    file-download-prefix: "C:"                    # 文件下载路径前缀
+    image-download-prefix: "C:"                   # 图片下载路径前缀
+    background-sequence-count: 4                  # 商户背景图轮播数量
+    ai-chat-max-messages: 20                      # AI 对话最大历史消息数
+    ai-memory-ttl-minutes: 10                     # AI 对话记忆过期时间（分钟）
+    ai-base-url: http://localhost:11434           # Ollama 服务地址
+    ai-default-model: qwen2.5:7b                  # 默认对话模型
+    ai-embedding-model: nomic-embed-text          # 向量嵌入模型
+    ai-embedding-batch-size: 100                  # 嵌入批处理大小
+    ai-rag-max-results: 3                         # RAG 检索最大结果数
+    ai-rag-min-score: 0.6                         # RAG 检索最低相似度阈值
+    oss-endpoint: https://oss-cn-wuhan-lr.aliyuncs.com  # OSS 端点
+    oss-region: cn-wuhan-lr                             # OSS 区域
+    oss-bucket: kaixinregion                            # OSS 存储桶
+    oss-access-key-id: ${ALIYUN_ACCESS_KEY_ID}            # OSS AccessKey ID（必须通过环境变量注入）
+    oss-access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET}    # OSS AccessKey Secret（必须通过环境变量注入，不得写入源码）
+
+    # 微信小程序配置
+    wechat-app-id: ${WECHAT_APP_ID:}                     # 小程序 AppID（通过环境变量注入）
+    wechat-app-secret: ${WECHAT_APP_SECRET:}             # 小程序 AppSecret（从环境变量读取）
+
+# ==========================================
+# Knife4j API 文档配置
+# ==========================================
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    enable-swagger-models: true
+    enable-document-manage: true
+    enable-reload-cache-parameter: false
+    enable-version: false
+    enable-request-cache: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-request-parameter: true

@@ -1,0 +1,12 @@
+Table: address
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+addressId | INT(10) | NULLABLE=NO | COMMENT=地址编号用户下的地址序号
+country | VARCHAR(50) | NULLABLE=NO | COMMENT=国家
+province | VARCHAR(50) | NULLABLE=NO | COMMENT=省份
+city | VARCHAR(50) | NULLABLE=NO | COMMENT=城市
+county | VARCHAR(50) | NULLABLE=NO | COMMENT=区县
+detail | VARCHAR(255) | NULLABLE=NO | COMMENT=详细地址街道门牌号等
+createTime | DATETIME(19) | NULLABLE=NO | DEFAULT=CURRENT_TIMESTAMP | COMMENT=创建时间
+delete | TINYINT(3) | NULLABLE=YES | DEFAULT=0 | COMMENT=逻辑删除:0-未删除1-已删除
+PK: id

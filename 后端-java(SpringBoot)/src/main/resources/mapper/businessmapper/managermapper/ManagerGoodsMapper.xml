@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerGoodsMapper">
+
+    <select id="selectById" resultType="edu.fafu.database.entity.Goods">
+        SELECT id, userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`
+        FROM goods WHERE id = #{id}
+    </select>
+
+    <insert id="updateList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO goods (userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId}, #{item.goodsId}, #{item.addressId}, #{item.preId},
+             #{item.goodsName}, #{item.describe}, #{item.goodsPrice}, #{item.goodsStock},
+             #{item.imagePath}, #{item.launch}, NOW(), #{item.delete})
+        </foreach>
+    </insert>
+
+</mapper>

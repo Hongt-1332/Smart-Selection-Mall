@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerAiMapper">
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE ai
+            <set>
+                <if test="item.category != null">category = #{item.category},</if>
+                <if test="item.kind != null">kind = #{item.kind},</if>
+                <if test="item.name != null">name = #{item.name},</if>
+                <if test="item.price != null">price = #{item.price},</if>
+                <if test="item.simpleDescription != null">simpleDescription = #{item.simpleDescription},</if>
+                <if test="item.features != null">features = #{item.features},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

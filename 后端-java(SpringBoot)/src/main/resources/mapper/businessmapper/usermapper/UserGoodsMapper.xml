@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.usermapper.UserGoodsMapper">
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO goods (id, userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.userId}, #{item.goodsId}, #{item.addressId}, #{item.preId},
+             #{item.goodsName}, #{item.describe}, #{item.goodsPrice}, #{item.goodsStock},
+             #{item.imagePath}, #{item.launch}, #{item.createTime}, #{item.delete})
+        </foreach>
+    </insert>
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE goods
+            <set>
+                <if test="item.userId != null">userId = #{item.userId},</if>
+                <if test="item.goodsId != null">goodsId = #{item.goodsId},</if>
+                <if test="item.addressId != null">addressId = #{item.addressId},</if>
+                <if test="item.preId != null">preId = #{item.preId},</if>
+                <if test="item.goodsName != null">goodsName = #{item.goodsName},</if>
+                <if test="item.describe != null">`describe` = #{item.describe},</if>
+                <if test="item.goodsPrice != null">goodsPrice = #{item.goodsPrice},</if>
+                <if test="item.goodsStock != null">goodsStock = #{item.goodsStock},</if>
+                <if test="item.imagePath != null">imagePath = #{item.imagePath},</if>
+                <if test="item.launch != null">launch = #{item.launch},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Goods">
+        SELECT id, userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`
+        FROM goods
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.goodsId != null">AND goodsId = #{entity.goodsId}</if>
+            <if test="entity.addressId != null">AND addressId = #{entity.addressId}</if>
+            <if test="entity.preId != null">AND preId = #{entity.preId}</if>
+            <if test="entity.goodsName != null">AND goodsName = #{entity.goodsName}</if>
+            <if test="entity.describe != null">AND `describe` = #{entity.describe}</if>
+            <if test="entity.goodsPrice != null">AND goodsPrice = #{entity.goodsPrice}</if>
+            <if test="entity.goodsStock != null">AND goodsStock = #{entity.goodsStock}</if>
+            <if test="entity.imagePath != null">AND imagePath = #{entity.imagePath}</if>
+            <if test="entity.launch != null">AND launch = #{entity.launch}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+    <select id="selectByIds" resultType="edu.fafu.database.entity.Goods">
+        SELECT id, userId, goodsId, addressId, preId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, createTime, `delete`
+        FROM goods
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

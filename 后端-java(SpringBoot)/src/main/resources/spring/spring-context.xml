@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- ========== Jackson ObjectMapper（注册 JavaTimeModule 以支持 LocalDateTime） ========== -->
+    <bean id="objectMapper" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject">
+            <bean class="com.fasterxml.jackson.databind.ObjectMapper"/>
+        </property>
+        <property name="targetMethod" value="registerModule"/>
+        <property name="arguments">
+            <list>
+                <bean class="com.fasterxml.jackson.datatype.jsr310.JavaTimeModule"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ========== Knife4j OpenAPI 文档 ========== -->
+    <bean id="openAPI" class="io.swagger.v3.oas.models.OpenAPI">
+        <property name="info">
+            <bean class="io.swagger.v3.oas.models.info.Info">
+                <property name="title" value="Web 商城 API 文档"/>
+                <property name="description" value="基于 Spring Boot + Sa-Token 的商城系统接口文档"/>
+                <property name="version" value="1.0.0"/>
+                <property name="contact">
+                    <bean class="io.swagger.v3.oas.models.info.Contact">
+                        <property name="name" value="开发团队"/>
+                        <property name="email" value="admin@example.com"/>
+                    </bean>
+                </property>
+                <property name="license">
+                    <bean class="io.swagger.v3.oas.models.info.License">
+                        <property name="name" value="Apache 2.0"/>
+                        <property name="url" value="https://www.apache.org/licenses/LICENSE-2.0"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

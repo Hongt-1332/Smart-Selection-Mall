@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.merchantmapper.MerchantUserMapper">
+
+    <select id="selectList" resultType="edu.fafu.database.entity.User">
+        SELECT id, defaultAddressId, userName, account, phone, `describe`, email, balance,
+               avatarPath, level, vipCreateTime, createTime, `delete`, uploadTime,
+               uploadBackground, uploadGoods, updateAvatar
+        FROM user
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.defaultAddressId != null">AND defaultAddressId = #{entity.defaultAddressId}</if>
+            <if test="entity.userName != null">AND userName = #{entity.userName}</if>
+            <if test="entity.account != null">AND account = #{entity.account}</if>
+            <if test="entity.phone != null">AND phone = #{entity.phone}</if>
+            <if test="entity.describe != null">AND `describe` = #{entity.describe}</if>
+            <if test="entity.email != null">AND email = #{entity.email}</if>
+            <if test="entity.balance != null">AND balance = #{entity.balance}</if>
+            <if test="entity.avatarPath != null">AND avatarPath = #{entity.avatarPath}</if>
+            <if test="entity.level != null">AND level = #{entity.level}</if>
+            <if test="entity.vipCreateTime != null">AND vipCreateTime = #{entity.vipCreateTime}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+            <if test="entity.uploadTime != null">AND uploadTime = #{entity.uploadTime}</if>
+            <if test="entity.uploadBackground != null">AND uploadBackground = #{entity.uploadBackground}</if>
+            <if test="entity.uploadGoods != null">AND uploadGoods = #{entity.uploadGoods}</if>
+            <if test="entity.updateAvatar != null">AND updateAvatar = #{entity.updateAvatar}</if>
+        </where>
+    </select>
+
+</mapper>

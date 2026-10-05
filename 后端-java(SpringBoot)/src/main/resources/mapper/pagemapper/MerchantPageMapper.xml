@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.pagemapper.MerchantPageMapper">
+
+    <select id="selectGoodsList" resultType="edu.fafu.database.dto.response.merchant.MerchantGoods">
+        SELECT id, userId, goodsName, `describe`, goodsPrice, goodsStock, imagePath, launch, preId, createTime, `delete`
+        FROM goods
+        <where>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.launch != null">AND launch = #{entity.launch}</if>
+            AND `delete` = 0
+        </where>
+        
+    </select>
+
+    <select id="selectTradeList" resultType="edu.fafu.database.dto.response.merchant.MerchantTrade">
+        SELECT t.id, t.orderId, t.userId, t.goodId, t.quantity, t.originAddress, t.currentAddress, t.targetAddress,
+               t.createTime, t.payTime, t.cancelTime, t.finishTime, t.`delete`,
+               g.userId AS merchantUserId, u.userName, g.goodsName, g.goodsPrice,
+               (g.goodsPrice * t.quantity) AS totalPrice
+        FROM trade t
+        LEFT JOIN goods g ON t.goodId = g.id
+        LEFT JOIN user u ON t.userId = u.id
+        <where>
+            t.`delete` = 0
+            <if test="entity.merchantUserId != null">AND g.userId = #{entity.merchantUserId}</if>
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+            <if test="entity.goodsName != null and entity.goodsName != ''">AND g.goodsName LIKE CONCAT('%', #{entity.goodsName}, '%')</if>
+            <if test="entity.originAddress != null and entity.originAddress != ''">AND t.originAddress LIKE CONCAT('%', #{entity.originAddress}, '%')</if>
+            <if test="entity.currentAddress != null and entity.currentAddress != ''">AND t.currentAddress LIKE CONCAT('%', #{entity.currentAddress}, '%')</if>
+            <if test="entity.targetAddress != null and entity.targetAddress != ''">AND t.targetAddress LIKE CONCAT('%', #{entity.targetAddress}, '%')</if>
+            <if test="entity.priceMin != null">AND g.goodsPrice &gt;= #{entity.priceMin}</if>
+            <if test="entity.priceMax != null">AND g.goodsPrice &lt;= #{entity.priceMax}</if>
+            <if test="entity.finishTimeStart != null">AND t.finishTime &gt;= #{entity.finishTimeStart}</if>
+            <if test="entity.finishTimeEnd != null">AND t.finishTime &lt;= #{entity.finishTimeEnd}</if>
+        </where>
+        
+    </select>
+
+    <select id="selectMerchantUserList" resultType="edu.fafu.database.dto.response.merchant.MerchantUser">
+        SELECT u.id, u.userName, u.avatarPath, u.email, u.`describe`, u.level, u.createTime,
+               (SELECT COUNT(*) FROM goods g WHERE g.userId = u.id AND g.`delete` = 0) AS goodsCount
+        FROM user u
+        <where>
+            u.level >= 1 AND u.`delete` = 0
+            <if test="entity.userName != null and entity.userName != ''">AND u.userName LIKE CONCAT('%', #{entity.userName}, '%')</if>
+        </where>
+        
+    </select>
+
+    <select id="selectBackgroundList" resultType="edu.fafu.database.dto.response.merchant.MerchantBackground">
+        SELECT b.id, b.userId, b.imagePath, b.sequence, b.createTime,
+               u.userName, u.avatarPath, u.`describe`, u.level,
+               u.level AS vipLevel,
+               u.level AS vipLevelName,
+               u.`delete`
+        FROM background b
+        LEFT JOIN user u ON b.userId = u.id
+        <where>
+            <if test="entity.userId != null">AND b.userId = #{entity.userId}</if>
+        </where>
+        ORDER BY b.sequence ASC
+    </select>
+
+
+    <select id="selectUnfinishedTradeCount" resultType="int">
+        SELECT COUNT(*)
+        FROM trade t
+        LEFT JOIN goods g ON t.goodId = g.id
+        WHERE g.userId = #{merchantUserId}
+          AND t.`delete` = 0
+          AND t.payTime IS NOT NULL
+          AND t.finishTime IS NULL
+          AND t.cancelTime IS NULL
+    </select>
+
+    <select id="selectMerchantBackgroundInfo" resultType="edu.fafu.database.dto.response.merchant.MerchantBackgroundVO">
+        SELECT u.userName, u.`describe`, u.level, vc.levelName
+        FROM user u
+        LEFT JOIN vipconfig vc ON u.level = vc.level
+        WHERE u.id = #{userId} AND u.`delete` = 0
+    </select>
+
+    <select id="selectMerchantBackgroundImages" resultType="edu.fafu.database.dto.response.merchant.MerchantBackgroundVO$BackgroundImage">
+        SELECT imagePath, sequence
+        FROM background
+        WHERE userId = #{userId}
+        ORDER BY sequence ASC
+    </select>
+
+    <select id="selectMerchantLaunchGoods" resultType="edu.fafu.database.dto.response.user.UserGoods">
+        SELECT g.id, g.userId, g.goodsId, g.addressId, g.preId, g.goodsName, g.`describe`, g.goodsPrice, g.goodsStock,
+               g.imagePath, g.launch, g.createTime, g.`delete`,
+               u.userName, u.avatarPath AS merchantAvatar, u.id AS merchantId,
+               CONCAT(ad.country, ad.province, ad.city, ad.county, ad.detail) AS address,
+               CASE WHEN c.id IS NOT NULL THEN true ELSE false END AS inCart,
+               CASE WHEN c.id IS NOT NULL THEN c.quantity ELSE 0 END AS cartQuantity
+        FROM goods g
+        LEFT JOIN user u ON g.userId = u.id
+        LEFT JOIN address ad ON g.addressId = ad.id
+        LEFT JOIN cart c ON c.goodId = g.id AND c.userId = #{currentUserId}
+        WHERE g.userId = #{userId} AND g.launch = 1 AND g.`delete` = 0
+        ORDER BY g.id DESC
+    </select>
+
+
+    <select id="selectAiList" resultType="edu.fafu.database.dto.response.merchant.MerchantAi">
+        SELECT a.id, a.userId, a.goodsId, a.category, a.kind, a.name, a.price, a.simpleDescription, a.features
+        FROM ai a
+        <where>
+            <if test="entity.userId != null">AND a.userId = #{entity.userId}</if>
+            AND a.delete = 0
+        </where>
+    </select>
+</mapper>

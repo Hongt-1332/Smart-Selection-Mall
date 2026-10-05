@@ -1,0 +1,31 @@
+server:
+  port: 0
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/web?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ${TEST_DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: your@qq.com
+    password: ${TEST_MAIL_PASSWORD:your-smtp-authorization-code}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 3000ms
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: org.example.entity
+  configuration:
+    map-underscore-to-camel-case: true

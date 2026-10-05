@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.managermapper.ManagerAddressMapper">
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE address
+            <set>
+                <if test="item.userId != null">userId = #{item.userId},</if>
+                <if test="item.addressId != null">addressId = #{item.addressId},</if>
+                <if test="item.country != null">country = #{item.country},</if>
+                <if test="item.province != null">province = #{item.province},</if>
+                <if test="item.city != null">city = #{item.city},</if>
+                <if test="item.county != null">county = #{item.county},</if>
+                <if test="item.detail != null">detail = #{item.detail},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

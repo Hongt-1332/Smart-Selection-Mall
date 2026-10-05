@@ -1,0 +1,144 @@
+================================
+ 数据库表结构总览
+================================
+
+Table: address
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+addressId | INT | | 地址编号用户下的地址序号
+country | VARCHAR | | 国家
+province | VARCHAR | | 省份
+city | VARCHAR | | 城市
+county | VARCHAR | | 区县
+detail | VARCHAR | | 详细地址街道门牌号等
+createTime | DATETIME | | 创建时间
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+
+Table: cart
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+goodId | INT | | 商品ID关联goods.id
+quantity | INT | | 商品数量
+createTime | DATETIME | | 添加时间
+
+Table: goods
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 商家用户ID关联user.id
+goodsId | VARCHAR | | 商品编号商户下的商品序号
+addressId | INT | | 发货地址ID关联address.id
+preId | INT | | 先前的商品ID
+goodsName | VARCHAR | | 商品名称
+describe | VARCHAR | | 商品简介
+goodsPrice | DECIMAL | | 商品单价保留两位小数
+goodsStock | INT | | 商品库存数量
+imagePath | VARCHAR | | 商品图片路径URL
+launch | TINYINT | | 上架状态:0-下架1-上架
+createTime | DATETIME | | 发布时间
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+version | INT | | 乐观锁版本号
+
+Table: trade
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+orderId | VARCHAR | | 订单号唯一标识一笔订单
+userId | INT | | 买家用户ID关联user.id
+goodId | INT | | 商品ID关联goods.id
+quantity | INT | | 购买数量
+originAddress | VARCHAR | | 发货地址
+currentAddress | VARCHAR | | 当前地址
+targetAddress | VARCHAR | | 目标地址
+createTime | DATETIME | | 下单时间
+payTime | DATETIME | | 支付时间NULL表示未支付
+cancelTime | DATETIME | | 取消时间NULL表示未取消
+finishTime | DATETIME | | 完成时间NULL表示未完成
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+---
+说明: totalPrice(订单总价) 由 SQL 查询时通过 goodsPrice * quantity 实时计算，非数据库物理列
+      singlePrice 未使用，已废弃
+
+Table: user
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userName | VARCHAR | | 用户名用于显示和登录
+account | VARCHAR | UNIQUE | 登录账号唯一标识
+password | VARCHAR | | 登录密码加密存储
+salt | VARCHAR | | 密码盐值用于加密
+role | VARCHAR | | 角色: user/merchant/admin
+defaultAddressId | INT | | 默认地址Id
+balance | DECIMAL | | 账户余额保留两位小数
+email | VARCHAR | | 邮箱
+phone | VARCHAR | | 手机号
+describe | VARCHAR | | 个人描述
+avatarPath | VARCHAR | | 头像路径
+imagePath | VARCHAR | | 用户图片路径
+level | INT | | VIP等级:0-普通 1-月度VIP 2-年度VIP
+vipCreateTime | DATETIME | | VIP开通时间
+vipDuration | INT | | VIP持续天数
+createTime | DATETIME | | 注册时间
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+uploadTime | DATETIME | | 上传时间
+updateAvatar | INT | | 当月已更新头像次数
+uploadBackground | INT | | 当月已更新背景次数
+uploadGoods | INT | | 当月已更新商品次数
+
+Table: ai
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+goodsId | INT | | 商品ID关联goods.id
+category | VARCHAR | | 商品分类
+kind | VARCHAR | | 商品种类
+name | VARCHAR | | 商品名称
+price | VARCHAR | | 商品价格
+simpleDescription | VARCHAR | | 简要描述
+features | VARCHAR | | 功能特性
+createTime | DATETIME | | 创建时间
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+
+Table: background
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+imagePath | VARCHAR | | 背景图路径
+sequence | INT | | 序号位置
+createTime | DATETIME | | 创建时间
+
+Table: vipconfig
+level | INT | PK | VIP等级
+maxAddressQuantity | INT | | 最大地址数量
+monthlyUpdateGoods | INT | | 每月商品更新上限
+monthlyUpdateAvatar | INT | | 每月头像更新上限
+monthlyUpdateBackground | INT | | 每月背景更新上限
+maxCartQuantity | INT | | 购物车最大商品数
+maxGoodsQuantity | INT | | 最大上架商品数
+maxAiQuantity | INT | | 最大AI商品数
+vipDuration | INT | | VIP有效期(天)
+price | DECIMAL | | VIP价格
+levelName | VARCHAR | | 等级名称
+duration | INT | | 持续天数
+createTime | DATETIME | | 创建时间
+
+Table: viptrade
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+level | INT | | VIP等级
+money | DECIMAL | | 交易金额
+num | INT | | 购买数量
+createTime | DATETIME | | 创建时间
+delete | TINYINT | | 逻辑删除:0-未删除1-已删除
+
+Table: upload
+id | INT | PK, AUTO_INCREMENT | 主键ID自增
+userId | INT | | 用户ID关联user.id
+createTime | DATETIME | | 创建时间
+updateTimes | DATETIME | | 最后更新时间
+
+Table: userlevelconfig
+level | INT | PK | 用户等级
+updateMonthlyLimit | INT | | 每月更新次数上限
+avatarIntervalDays | INT | | 头像更新间隔天数
+cartMaxItems | INT | | 购物车最大商品数
+goodsMaxListed | INT | | 最大上架商品数
+createTime | DATETIME | | 创建时间
+
+Table: merchantlevelconfig
+level | INT | PK | 商户等级
+maxUpdatesPerPosition | INT | | 每个位置最大更新次数
+updateIntervalDays | INT | | 更新间隔天数
+createTime | DATETIME | | 创建时间

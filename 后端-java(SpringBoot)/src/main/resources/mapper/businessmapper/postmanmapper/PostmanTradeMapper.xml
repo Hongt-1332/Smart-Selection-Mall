@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.postmanmapper.PostmanTradeMapper">
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE trade
+            <set>
+                <if test="item.orderId != null">orderId = #{item.orderId},</if>
+                <if test="item.userId != null">userId = #{item.userId},</if>
+                <if test="item.goodId != null">goodId = #{item.goodId},</if>
+                <if test="item.quantity != null">quantity = #{item.quantity},</if>
+                <if test="item.originAddress != null">originAddress = #{item.originAddress},</if>
+                <if test="item.targetAddress != null">targetAddress = #{item.targetAddress},</if>
+                <if test="item.currentAddress != null">currentAddress = #{item.currentAddress},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+                <if test="item.payTime != null">payTime = #{item.payTime},</if>
+                <if test="item.cancelTime != null">cancelTime = #{item.cancelTime},</if>
+                <if test="item.finishTime != null">finishTime = #{item.finishTime},</if>
+                <if test="item.delete != null">`delete` = #{item.delete},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Trade">
+        SELECT id, orderId, userId, goodId, quantity, originAddress, targetAddress, currentAddress, createTime, payTime, cancelTime, finishTime, `delete`
+        FROM trade
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.orderId != null">AND orderId = #{entity.orderId}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>
+            <if test="entity.goodId != null">AND goodId = #{entity.goodId}</if>
+            <if test="entity.quantity != null">AND quantity = #{entity.quantity}</if>
+            <if test="entity.originAddress != null">AND originAddress = #{entity.originAddress}</if>
+            <if test="entity.targetAddress != null">AND targetAddress = #{entity.targetAddress}</if>
+            <if test="entity.currentAddress != null">AND currentAddress = #{entity.currentAddress}</if>
+            <if test="entity.createTime != null">AND createTime = #{entity.createTime}</if>
+            <if test="entity.payTime != null">AND payTime = #{entity.payTime}</if>
+            <if test="entity.cancelTime != null">AND cancelTime = #{entity.cancelTime}</if>
+            <if test="entity.finishTime != null">AND finishTime = #{entity.finishTime}</if>
+            <if test="entity.delete != null">AND `delete` = #{entity.delete}</if>
+        </where>
+    </select>
+
+</mapper>

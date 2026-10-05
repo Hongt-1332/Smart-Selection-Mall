@@ -1,0 +1,7 @@
+Table: background
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+imagePath | VARCHAR(255) | NULLABLE=NO | COMMENT=背景图路径
+sequence | INT(10) | NULLABLE=NO | COMMENT=序号位置
+createTime | DATETIME(19) | NULLABLE=NO | COMMENT=创建时间
+PK: id

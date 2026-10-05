@@ -1,0 +1,9 @@
+Table: viptrade
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+level | INT(10) | NULLABLE=NO | COMMENT=VIP等级
+money | DECIMAL(10,2) | NULLABLE=NO | COMMENT=交易金额
+num | INT(10) | NULLABLE=NO | DEFAULT=1 | COMMENT=购买数量
+createTime | DATETIME(19) | NULLABLE=NO | COMMENT=创建时间
+delete | TINYINT(3) | NULLABLE=NO | DEFAULT=0 | COMMENT=逻辑删除:0-未删除1-已删除
+PK: id

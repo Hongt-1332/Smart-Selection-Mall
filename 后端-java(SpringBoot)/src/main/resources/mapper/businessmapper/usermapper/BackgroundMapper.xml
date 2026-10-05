@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fafu.database.mapper.businessmapper.usermapper.BackgroundMapper">
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO background (id, userId, imagePath, sequence, createTime)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.userId}, #{item.imagePath}, #{item.sequence}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <update id="updateList">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE background
+            <set>
+                <if test="item.userId != null">userId = #{item.userId},</if>
+                imagePath = #{item.imagePath},                <if test="item.sequence != null">sequence = #{item.sequence},</if>
+                <if test="item.createTime != null">createTime = #{item.createTime},</if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectList" resultType="edu.fafu.database.entity.Background">
+        SELECT id, userId, imagePath, sequence, createTime
+        FROM background
+        <where>
+            <if test="entity.id != null">AND id = #{entity.id}</if>
+            <if test="entity.userId != null">AND userId = #{entity.userId}</if>            <if test="entity.sequence != null">AND sequence = #{entity.sequence}</if>
+        </where>
+    </select>
+
+    <delete id="deleteList">
+        DELETE FROM background
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

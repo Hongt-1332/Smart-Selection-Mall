@@ -1,0 +1,13 @@
+Table: ai
+id | INT(10) | NULLABLE=NO | COMMENT=主键ID自增
+userId | INT(10) | NULLABLE=NO | COMMENT=用户ID关联user.id
+goodsId | INT(10) | NULLABLE=NO | COMMENT=商品ID关联goods.id
+category | VARCHAR(255) | NULLABLE=NO | COMMENT=商品分类
+kind | VARCHAR(255) | NULLABLE=NO | COMMENT=商品种类
+name | VARCHAR(255) | NULLABLE=NO | COMMENT=商品名称
+price | VARCHAR(255) | NULLABLE=NO | COMMENT=商品价格
+simpleDescription | VARCHAR(255) | NULLABLE=NO | COMMENT=简要描述
+features | VARCHAR(500) | NULLABLE=NO | COMMENT=功能特性
+createTime | DATETIME(19) | NULLABLE=NO | COMMENT=创建时间
+delete | TINYINT(3) | NULLABLE=NO | COMMENT=逻辑删除0-未删除1-已删除
+PK: id
