@@ -1,0 +1,43 @@
+<!-- components/background-effects/index.wxml — 星空 / 十二星座 / 流星 背景特效 -->
+<view class="bg-effects" wx:if="{{visible}}">
+  <!-- 星空 -->
+  <view class="stars-container">
+    <view
+      class="star"
+      wx:for="{{stars}}"
+      wx:key="key"
+      style="{{item.style}}"
+    ></view>
+  </view>
+
+  <!-- 十二星座 -->
+  <view class="constellations" wx:if="{{showZodiac}}">
+    <view
+      class="constellation"
+      wx:for="{{constellations}}"
+      wx:key="key"
+      style="{{item.posStyle}}"
+    >
+      <!-- 连线 -->
+      <view class="cz-line" wx:for="{{item.lines}}" wx:for-item="line" wx:key="key" style="{{line.style}}"></view>
+      <!-- 星点 -->
+      <view
+        class="cz-point"
+        wx:for="{{item.points}}"
+        wx:for-item="pt"
+        wx:key="key"
+        style="{{pt.style}}"
+      ></view>
+      <!-- 名称 -->
+      <text class="cz-name">{{item.symbol}} {{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 流星 -->
+  <view
+    class="meteor"
+    wx:for="{{meteors}}"
+    wx:key="key"
+    style="{{item.style}}"
+  ></view>
+</view>

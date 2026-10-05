@@ -1,0 +1,313 @@
+/* pages/merchant/goods-edit/goods-edit.wxss — 商品发布 / 编辑页
+ * 颜色一律使用字面量：本页曾在弹层里遇到过 CSS 变量解析失败导致
+ * 元素"隐形"的问题，这里彻底不依赖 var()。
+ */
+
+.edit-page {
+  /* 底部给固定提交栏让位：栏高 92rpx + 上下内边距 + 安全区 */
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
+}
+
+/* ===== 表单卡片 ===== */
+.form-card {
+  background-color: #14161e;
+  border: 1rpx solid rgba(255, 255, 255, 0.06);
+  border-radius: 20rpx;
+  padding: 28rpx 26rpx;
+}
+
+.form-card .field {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 28rpx;
+}
+
+.form-card .field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #8890a0;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 22rpx;
+  box-sizing: border-box;
+  background-color: #1e2029;
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  border-radius: 12rpx;
+  color: #e5e6e8;
+  font-size: 28rpx;
+}
+
+.textarea {
+  height: auto;
+  min-height: 160rpx;
+  padding: 18rpx 22rpx;
+  line-height: 1.5;
+}
+
+.input-placeholder {
+  color: #6b7280;
+}
+
+/* 提示文字 */
+.field-hint {
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: #e6a23c;
+}
+
+/* ===== 必填项检查清单 =====
+ * 直接把「还差什么」列在表单顶部，用户不用点提交、不用靠 toast 猜。 */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 20rpx 22rpx;
+  margin-bottom: 28rpx;
+  background-color: rgba(230, 162, 60, 0.1);
+  border: 1rpx solid rgba(230, 162, 60, 0.35);
+  border-radius: 12rpx;
+}
+
+.checklist-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #e6a23c;
+  margin-bottom: 4rpx;
+}
+
+.checklist-item {
+  font-size: 23rpx;
+  line-height: 1.6;
+  color: #e6a23c;
+}
+
+.field-hint-plain {
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: #8890a0;
+}
+
+/* ===== 发货地址下拉 ===== */
+.dropdown {
+  width: 100%;
+}
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  width: 100%;
+  min-height: 80rpx;
+  padding: 18rpx 22rpx;
+  box-sizing: border-box;
+  background-color: #1e2029;
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  border-radius: 12rpx;
+}
+
+.dropdown-trigger-filled {
+  border-color: rgba(91, 158, 255, 0.5);
+}
+
+.dropdown-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: #e5e6e8;
+  word-break: break-all;
+}
+
+.dropdown-placeholder {
+  color: #6b7280;
+}
+
+.dropdown-arrow {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: #8890a0;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow-up {
+  transform: rotate(180deg);
+}
+
+.dropdown-list {
+  margin-top: 10rpx;
+  padding: 8rpx;
+  background-color: #1e2029;
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  border-radius: 12rpx;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 18rpx;
+  border-radius: 10rpx;
+}
+
+.dropdown-item-active {
+  background-color: rgba(91, 158, 255, 0.14);
+}
+
+.dropdown-item-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: #e5e6e8;
+  word-break: break-all;
+}
+
+.addr-radio {
+  flex-shrink: 0;
+  width: 32rpx;
+  height: 32rpx;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 3rpx solid rgba(255, 255, 255, 0.25);
+}
+
+.addr-radio-on {
+  border-color: #5b9eff;
+  background-color: #5b9eff;
+  box-shadow: inset 0 0 0 5rpx #1e2029;
+}
+
+/* ===== 商品图片 ===== */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.upload-hint {
+  font-size: 22rpx;
+  color: #8890a0;
+}
+
+.img-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.img-preview {
+  width: 260rpx;
+  height: 260rpx;
+  border-radius: 14rpx;
+  background-color: #1e2029;
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.img-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 16rpx;
+  width: 100%;
+}
+
+.img-btn {
+  display: flex;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 76rpx;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.img-btn::after { border: none; }
+
+.img-btn-view {
+  background-color: #5b9eff;
+  color: #ffffff;
+}
+
+.img-btn-del {
+  background-color: rgba(245, 108, 108, 0.16);
+  border: 1rpx solid rgba(245, 108, 108, 0.35);
+  color: #f56c6c;
+}
+
+/* ===== 底部固定提交栏 =====
+ * 用 position: fixed 钉在视口底部，不参与任何 flex 高度计算，
+ * 因此不存在"被内容挤出可视区"或"高度算不出来"的问题。 */
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background-color: #14161e;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.submit-main {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 92rpx;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 14rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 1;
+  background-color: #5b9eff;
+  color: #ffffff;
+}
+
+.submit-main::after { border: none; }
+
+.submit-main[disabled] { opacity: 0.6; }
+
+/* 表单内的按钮统一尺寸覆盖（app.wxss 的 .btn 依赖变量，这里显式兜底） */
+.form-card .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  border: none;
+  line-height: 1;
+}
+
+.form-card .btn-sm {
+  height: 68rpx;
+  font-size: 26rpx;
+  border-radius: 10rpx;
+}
+
+.form-card .btn-primary {
+  background-color: #5b9eff;
+  color: #ffffff;
+}

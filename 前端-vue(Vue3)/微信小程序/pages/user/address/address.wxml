@@ -1,0 +1,110 @@
+<!--pages/user/address/address.wxml — 收货地址-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <view class="page-header">
+    <view class="flex-col">
+      <text class="page-title">收货地址</text>
+      <text class="page-sub">管理您的配送地址</text>
+    </view>
+    <button class="btn btn-sm btn-primary" bindtap="openAdd">+ 添加地址</button>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <block wx:if="{{!loading && addressList.length > 0}}">
+    <view class="address-card {{item.isDefault ? 'address-card-default' : ''}}"
+      wx:for="{{addressList}}" wx:key="id">
+      <view class="card-fields">
+        <view class="field-row">
+          <text class="field-icon">🌍</text>
+          <text class="field-label">国家</text>
+          <text class="field-value">{{item.country}}</text>
+        </view>
+        <view class="field-row">
+          <text class="field-icon">🏛️</text>
+          <text class="field-label">省份</text>
+          <text class="field-value">{{item.province}}</text>
+        </view>
+        <view class="field-row">
+          <text class="field-icon">🏙️</text>
+          <text class="field-label">城市</text>
+          <text class="field-value">{{item.city}}</text>
+        </view>
+        <view class="field-row">
+          <text class="field-icon">📍</text>
+          <text class="field-label">区县</text>
+          <text class="field-value">{{item.county}}</text>
+        </view>
+        <view class="field-row field-row-detail">
+          <view class="flex-1">
+            <text class="field-icon">🏠</text>
+            <text class="field-label">详细</text>
+            <text class="field-value field-value-wrap">{{item.detail}}</text>
+          </view>
+          <text class="tag tag-warning" wx:if="{{item.isDefault}}">默认</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <button class="btn btn-sm btn-default" data-index="{{index}}" bindtap="openEdit">编辑</button>
+        <button class="btn btn-sm btn-default" wx:if="{{!item.isDefault}}"
+          data-index="{{index}}" bindtap="handleSetDefault">设为默认</button>
+        <button class="btn btn-sm btn-danger" data-index="{{index}}" bindtap="handleDelete">删除</button>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:if="{{!loading && !addressList.length}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">暂无收货地址</text>
+    <text class="text-muted">添加一个地址开始购物吧</text>
+    <button class="btn btn-sm btn-primary" bindtap="openAdd">添加第一个地址</button>
+  </view>
+</view>
+
+<!-- 添加/编辑弹窗 -->
+<view class="sheet-mask" wx:if="{{dialogVisible}}" bindtap="closeDialog">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">{{isEdit ? '编辑地址' : '添加地址'}}</text>
+      <text class="modal-close" bindtap="closeDialog">✕</text>
+    </view>
+    <view class="sheet-body">
+      <view class="field">
+        <text class="field-label">国家</text>
+        <input class="input" placeholder="请输入国家" placeholder-class="input-placeholder"
+          value="{{form.country}}" data-field="country" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">省份</text>
+        <input class="input" placeholder="省份/州" placeholder-class="input-placeholder"
+          value="{{form.province}}" data-field="province" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">城市</text>
+        <input class="input" placeholder="城市" placeholder-class="input-placeholder"
+          value="{{form.city}}" data-field="city" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">区县</text>
+        <input class="input" placeholder="区/县" placeholder-class="input-placeholder"
+          value="{{form.county}}" data-field="county" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">详细地址</text>
+        <textarea class="textarea" placeholder="街道、门牌号、小区等详细地址" placeholder-class="input-placeholder"
+          value="{{form.detail}}" data-field="detail" bindinput="onFormInput" />
+      </view>
+    </view>
+    <view class="sheet-footer">
+      <button class="btn btn-default flex-1" bindtap="closeDialog">取消</button>
+      <button class="btn btn-primary flex-1" bindtap="handleSave" disabled="{{saveLoading}}">
+        {{saveLoading ? '保存中...' : (isEdit ? '保存修改' : '确认添加')}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

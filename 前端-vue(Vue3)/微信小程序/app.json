@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/ai-recommend/ai-recommend",
+    "pages/about/about",
+    "pages/goods-detail/goods-detail",
+    "pages/search/search",
+    "pages/user/goods/goods",
+    "pages/user/cart/cart",
+    "pages/user/address/address",
+    "pages/user/trade/trade",
+    "pages/user/info/info",
+    "pages/user/bg/bg",
+    "pages/user/vip/vip",
+    "pages/user/merchant/merchant",
+    "pages/merchant/goods/goods",
+    "pages/merchant/goods-edit/goods-edit",
+    "pages/merchant/trade/trade",
+    "pages/merchant/ai/ai"
+  ],
+  "usingComponents": {
+    "background-effects": "/components/background-effects/index",
+    "confirm-dialog": "/components/confirm-dialog/index"
+  },
+  "window": {
+    "navigationBarTextStyle": "@navTxtStyle",
+    "navigationBarTitleText": "智选商城",
+    "navigationBarBackgroundColor": "@navBgColor",
+    "backgroundColor": "@backgroundColor",
+    "backgroundTextStyle": "@backgroundTxtStyle"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "@tabBarColor",
+    "selectedColor": "@tabBarSelectedColor",
+    "backgroundColor": "@tabBarBackgroundColor",
+    "borderStyle": "@tabBarBorderStyle",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/ai-recommend/ai-recommend", "text": "智能推荐" },
+      { "pagePath": "pages/user/goods/goods", "text": "用户中心" },
+      { "pagePath": "pages/merchant/goods/goods", "text": "商户中心" },
+      { "pagePath": "pages/about/about", "text": "关于" }
+    ]
+  },
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

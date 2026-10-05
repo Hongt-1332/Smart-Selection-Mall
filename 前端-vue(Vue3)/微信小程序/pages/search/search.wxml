@@ -1,0 +1,111 @@
+<!--pages/search/search.wxml — 商品搜索（独立页面，解决小程序单页内容装不下的问题）-->
+<background-effects star-count="30" meteor-count="16" />
+
+<view class="page search-page">
+  <!-- 搜索输入 -->
+  <view class="search-box">
+    <input class="search-input-lg" placeholder="输入商品名称" placeholder-class="input-placeholder"
+      value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="handleSearch"
+      focus="{{autoFocus}}" />
+    <button class="btn btn-sm btn-primary" bindtap="handleSearch">搜索</button>
+  </view>
+
+  <!-- 详细条件（折叠区，避免单屏内容过载） -->
+  <view class="card filter-card">
+    <view class="filter-head" bindtap="toggleFilter">
+      <text class="filter-title">⚙️ 详细条件</text>
+      <text class="filter-arrow">{{filterOpen ? '收起 ▲' : '展开 ▼'}}</text>
+    </view>
+
+    <view class="filter-body" wx:if="{{filterOpen}}">
+      <view class="field">
+        <text class="field-label">商家名称</text>
+        <input class="input" placeholder="按商家筛选" placeholder-class="input-placeholder"
+          value="{{form.userName}}" data-field="userName" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">价格区间</text>
+        <view class="price-range">
+          <input class="input flex-1" type="digit" placeholder="最低价" placeholder-class="input-placeholder"
+            value="{{form.priceMin}}" data-field="priceMin" bindinput="onNumberInput" />
+          <text class="range-sep">~</text>
+          <input class="input flex-1" type="digit" placeholder="最高价" placeholder-class="input-placeholder"
+            value="{{form.priceMax}}" data-field="priceMax" bindinput="onNumberInput" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已选条件标签 -->
+  <view class="chips" wx:if="{{chips.length}}">
+    <view class="chip" wx:for="{{chips}}" wx:key="key" data-key="{{item.key}}" bindtap="removeChip">
+      <text>{{item.text}}</text>
+      <text class="chip-x">✕</text>
+    </view>
+    <view class="chip chip-clear" bindtap="resetAll">
+      <text>清空全部</text>
+    </view>
+  </view>
+
+  <!-- 搜索按钮组 -->
+  <view class="action-row">
+    <button class="btn btn-primary flex-1" bindtap="handleSearch">搜索</button>
+    <button class="btn btn-default flex-1" bindtap="resetAll">重置</button>
+  </view>
+
+  <!-- 结果 -->
+  <view class="loading" wx:if="{{loading}}">搜索中...</view>
+
+  <block wx:if="{{!loading && searched}}">
+    <view class="result-head">
+      <text class="result-count">共找到 {{total}} 件商品</text>
+    </view>
+
+    <view class="goods-grid">
+      <view class="goods-card" wx:for="{{goodsList}}" wx:key="id"
+        data-id="{{item.id}}" bindtap="goDetail">
+        <view class="goods-img-wrap">
+          <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imagePath}}" mode="aspectFill" />
+          <text wx:else class="goods-img-placeholder">暂无图片</text>
+        </view>
+        <view class="goods-info">
+          <text class="goods-name">{{item.goodsName}}</text>
+          <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+          <view class="goods-price-row">
+            <text class="goods-price">¥{{item.goodsPriceText}}</text>
+            <text class="goods-stock">库存 {{item.goodsStock}}</text>
+          </view>
+          <view class="merchant-info">
+            <view class="merchant-avatar">
+              <text class="avatar-ph">👤</text>
+            </view>
+            <text class="merchant-name">{{item.userName}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!goodsList.length}}">
+      <text class="empty-icon">🔍</text>
+      <text class="empty-text">没有找到匹配的商品</text>
+      <text class="empty-hint">试试减少筛选条件</text>
+    </view>
+
+    <!-- 分页 -->
+    <view class="pagination" wx:if="{{pages > 1}}">
+      <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+      <text class="page-text">{{pageNum}} / {{pages}} 页</text>
+      <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+    </view>
+  </block>
+
+  <!-- 未搜索时的提示 -->
+  <view class="empty" wx:if="{{!loading && !searched}}">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">输入关键词开始搜索</text>
+    <text class="empty-hint">可按商品名称、商家、价格区间筛选</text>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

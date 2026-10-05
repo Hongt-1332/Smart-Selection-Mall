@@ -1,0 +1,128 @@
+<!--pages/user/trade/trade.wxml — 下单记录-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <view class="page-header-center">
+    <text class="page-title-center">下单记录</text>
+  </view>
+
+  <!-- 搜索输入：单独一行，输入框占满 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索商品名称" placeholder-class="input-placeholder"
+      value="{{search.goodsName}}" data-field="goodsName" bindinput="onSearchInput"
+      confirm-type="search" bindconfirm="handleSearch" />
+  </view>
+
+  <!-- 操作行：搜索 / 重置 / 高级搜索 等宽并排，合力铺满整行 -->
+  <view class="toolbar">
+    <button class="btn btn-primary" bindtap="handleSearch">搜索</button>
+    <button class="btn btn-default" bindtap="handleReset">重置</button>
+    <button class="btn btn-default" bindtap="openAdv">高级搜索</button>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <!-- 订单卡片列表 -->
+  <view class="trade-card" wx:for="{{tradeList}}" wx:key="id">
+    <view class="trade-head">
+      <text class="trade-order">订单号：{{item.orderId}}</text>
+      <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+    </view>
+
+    <view class="trade-row">
+      <text class="trade-label">商品名称</text>
+      <text class="trade-value">{{item.goodsName}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">商家</text>
+      <text class="trade-value">{{item.merchantName || '-'}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">单价 / 数量</text>
+      <text class="trade-value">¥{{item.goodsPriceText}} × {{item.quantity}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">总价</text>
+      <text class="trade-value text-danger">¥{{item.totalPriceText}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">收货地址</text>
+      <text class="trade-value text-ellipsis">{{item.targetAddress}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">下单时间</text>
+      <text class="trade-value">{{item.createTimeText}}</text>
+    </view>
+    <view class="trade-row">
+      <text class="trade-label">完成时间</text>
+      <text class="trade-value">{{item.finishTimeText}}</text>
+    </view>
+
+    <view class="trade-actions" wx:if="{{item.canCancel}}">
+      <button class="btn btn-sm btn-danger" data-index="{{index}}" bindtap="handleCancel">取消订单</button>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !tradeList.length}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无订单</text>
+  </view>
+
+  <view class="pagination" wx:if="{{total > 0}}">
+    <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+    <text class="page-text">{{pageNum}} / {{pages}} 页 · 共 {{total}} 条</text>
+    <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+  </view>
+</view>
+
+<!-- 高级搜索 -->
+<view class="sheet-mask" wx:if="{{advVisible}}" bindtap="closeAdv">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">高级搜索</text>
+      <text class="modal-close" bindtap="closeAdv">✕</text>
+    </view>
+    <view class="sheet-body">
+      <view class="field">
+        <text class="field-label">商家名称</text>
+        <input class="input" placeholder="商家名称" placeholder-class="input-placeholder"
+          value="{{search.merchantName}}" data-field="merchantName" bindinput="onSearchInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">数量范围</text>
+        <view class="price-range">
+          <input class="input flex-1" type="number" placeholder="最小" placeholder-class="input-placeholder"
+            value="{{search.minQty}}" data-field="minQty" data-decimal="false" bindinput="onNumberInput" />
+          <text class="range-sep">~</text>
+          <input class="input flex-1" type="number" placeholder="最大" placeholder-class="input-placeholder"
+            value="{{search.maxQty}}" data-field="maxQty" data-decimal="false" bindinput="onNumberInput" />
+        </view>
+      </view>
+      <view class="field">
+        <text class="field-label">总价范围</text>
+        <view class="price-range">
+          <input class="input flex-1" type="digit" placeholder="最小" placeholder-class="input-placeholder"
+            value="{{search.minTotal}}" data-field="minTotal" data-decimal="true" bindinput="onNumberInput" />
+          <text class="range-sep">~</text>
+          <input class="input flex-1" type="digit" placeholder="最大" placeholder-class="input-placeholder"
+            value="{{search.maxTotal}}" data-field="maxTotal" data-decimal="true" bindinput="onNumberInput" />
+        </view>
+      </view>
+      <view class="field">
+        <text class="field-label">订单状态</text>
+        <picker mode="selector" range="{{statusOptions}}" value="{{statusIndex}}" bindchange="onStatusChange">
+          <view class="input picker-value">
+            {{statusIndex >= 0 ? statusOptions[statusIndex] : '全部'}}
+          </view>
+        </picker>
+      </view>
+    </view>
+    <view class="sheet-footer">
+      <button class="btn btn-default flex-1" bindtap="closeAdv">取消</button>
+      <button class="btn btn-primary flex-1" bindtap="advSearch">搜索</button>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

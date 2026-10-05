@@ -1,0 +1,162 @@
+/* pages/about/about.wxss
+ * 颜色统一走 app.wxss 中的主题变量，跟随系统深色/浅色模式自动切换，
+ * 避免浅色模式下「白底 + 深色卡片」的割裂感。
+ */
+.about {
+  /* 底部留出自定义 tabBar 的高度，避免内容被遮住 */
+  padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom));
+}
+
+.about-section {
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 22rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+/* ===== 品牌 ===== */
+.hero-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  text-align: center;
+  /* 品牌区使用主题渐变，深浅模式下都和谐 */
+  background: linear-gradient(145deg, rgba(91, 141, 239, 0.14), rgba(139, 92, 246, 0.06));
+  border-color: rgba(91, 141, 239, 0.22);
+}
+
+.brand-icon {
+  font-size: 60rpx;
+  color: var(--brand-deep);
+}
+
+.brand-title {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: var(--text-strong);
+  letter-spacing: 3rpx;
+}
+
+.brand-slogan {
+  font-size: 26rpx;
+  color: var(--brand-deep);
+  letter-spacing: 2rpx;
+}
+
+.brand-desc {
+  font-size: 25rpx;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-top: 8rpx;
+  text-align: left;
+}
+
+
+
+/* ===== Section 标题 ===== */
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-left: 18rpx;
+  border-left: 6rpx solid var(--brand-deep);
+  margin-bottom: 26rpx;
+}
+
+/* ===== 数据 ===== */
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.stat-card {
+  width: calc((100% - 20rpx) / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 32rpx 16rpx;
+  border-radius: 18rpx;
+  background: rgba(91, 141, 239, 0.08);
+  border: 1rpx solid rgba(91, 141, 239, 0.18);
+}
+
+.stat-num { font-size: 40rpx; font-weight: 700; color: var(--brand); }
+.stat-label { font-size: 24rpx; color: var(--text-muted); }
+
+/* ===== 技术 ===== */
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.tech-item {
+  width: calc((100% - 40rpx) / 3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 24rpx 10rpx;
+  border-radius: 16rpx;
+  background: var(--bg-soft);
+  border: 1rpx solid var(--border-base);
+}
+
+.tech-icon { font-size: 40rpx; }
+.tech-name { font-size: 24rpx; color: var(--text-primary); font-weight: 500; text-align: center; }
+.tech-ver { font-size: 20rpx; color: var(--text-muted); }
+
+/* ===== 功能 ===== */
+.feature-list { display: flex; flex-direction: column; gap: 18rpx; }
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: var(--bg-soft);
+  border: 1rpx solid var(--border-base);
+}
+
+.feature-icon { font-size: 44rpx; flex-shrink: 0; }
+
+.feature-content { flex: 1; display: flex; flex-direction: column; gap: 8rpx; }
+
+.feature-title { font-size: 28rpx; font-weight: 600; color: var(--text-primary); }
+.feature-desc { font-size: 24rpx; color: var(--text-secondary); line-height: 1.6; }
+
+/* ===== 联系 ===== */
+.contact-list { display: flex; flex-direction: column; }
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid var(--border-base);
+}
+
+.contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.contact-label { font-size: 25rpx; color: var(--text-muted); flex-shrink: 0; }
+.contact-value { font-size: 25rpx; color: var(--text-primary); text-align: right; }
+
+/* ===== 底部 ===== */
+.about-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 32rpx 0 20rpx;
+}
+
+.footer-main { font-size: 22rpx; color: var(--text-muted); }
+.footer-sub { font-size: 20rpx; color: var(--text-secondary); opacity: 0.7; }

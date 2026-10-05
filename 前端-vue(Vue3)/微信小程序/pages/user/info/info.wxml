@@ -1,0 +1,193 @@
+<!--pages/user/info/info.wxml — 个人信息-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <!-- 未登录 -->
+  <view class="not-logged-in" wx:if="{{!isLoggedIn}}">
+    <view class="nl-card">
+      <text class="nl-icon">🔒</text>
+      <text class="nl-text">请先登录</text>
+      <text class="nl-sub">微信一键登录后即可查看和编辑个人信息</text>
+      <button class="btn nl-btn" bindtap="goLogin">微信一键登录</button>
+    </view>
+  </view>
+
+  <block wx:else>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+    <!-- 顶部信息 -->
+    <view class="profile-banner">
+      <view class="banner-inner">
+        <view class="avatar-col" bindtap="chooseAvatar">
+          <view class="avatar-ring">
+            <image wx:if="{{imageUrl}}" class="avatar-img" src="{{imageUrl}}" mode="aspectFill" />
+            <text wx:else class="avatar-icon">👤</text>
+            <view class="avatar-edit">📷</view>
+          </view>
+          <text class="upload-hint" wx:if="{{uploadLoading}}">上传中...</text>
+        </view>
+
+        <view class="info-grid">
+          <view class="info-cell">
+            <text class="cell-label">账号</text>
+            <text class="cell-val">{{updateForm.account}}</text>
+          </view>
+          <view class="info-cell">
+            <text class="cell-label">用户名</text>
+            <text class="cell-val">{{updateForm.userName || '未设置'}}</text>
+          </view>
+          <view class="info-cell info-cell-balance">
+            <text class="cell-label">余额</text>
+            <text class="cell-val cell-val-balance">¥{{updateForm.balanceText}}</text>
+          </view>
+          <view class="info-cell">
+            <text class="cell-label">VIP等级</text>
+            <text class="tag {{userLevel > 0 ? 'tag-warning' : 'tag-info'}}">{{vipLevelText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 编辑资料 -->
+    <view class="section-card">
+      <text class="card-hd">✏️ 编辑资料</text>
+      <view class="field">
+        <text class="field-label">用户名</text>
+        <input class="input" placeholder="2-20个字符" placeholder-class="input-placeholder"
+          value="{{updateForm.userName}}" data-field="userName" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">邮箱</text>
+        <input class="input" placeholder="请输入邮箱" placeholder-class="input-placeholder"
+          value="{{updateForm.email}}" data-field="email" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">手机号</text>
+        <input class="input" type="number" placeholder="请输入手机号" placeholder-class="input-placeholder"
+          value="{{updateForm.phone}}" data-field="phone" bindinput="onFormInput" />
+      </view>
+      <button class="btn btn-gradient btn-block form-btn" bindtap="handleUpdate" disabled="{{updateLoading}}">
+        {{updateLoading ? '保存中...' : '保存修改'}}
+      </button>
+
+      <view class="divider"></view>
+
+      <view class="field">
+        <text class="field-label">个人简介</text>
+        <textarea class="textarea" placeholder="介绍一下自己..." placeholder-class="input-placeholder"
+          maxlength="200" value="{{updateForm.describe}}" data-field="describe" bindinput="onFormInput" />
+      </view>
+      <button class="btn btn-gradient btn-block form-btn" bindtap="handleSaveDescribe" disabled="{{describeLoading}}">
+        {{describeLoading ? '保存中...' : '保存简介'}}
+      </button>
+    </view>
+
+    <!-- 背景管理 -->
+    <view class="section-card">
+      <text class="card-hd">🖼️ 背景管理</text>
+      <view class="bg-slots">
+        <view class="bg-slot" wx:for="{{bgSlots}}" wx:key="index">
+          <view class="slot-head">
+            <text class="slot-label">位置 {{index + 1}}</text>
+            <text class="slot-action" wx:if="{{item}}">点击更换</text>
+          </view>
+          <!-- 已有背景：整块图片可点，点击即更换；上传中盖半透明遮罩 -->
+          <view class="slot-img-wrap" wx:if="{{item}}" data-slot="{{index + 1}}" bindtap="chooseSlotBg">
+            <image class="slot-img" src="{{item.imagePath}}" mode="aspectFill" />
+            <view class="slot-mask" wx:if="{{uploadingSlot === index + 1}}">
+              <text>上传中...</text>
+            </view>
+          </view>
+          <!-- 空槽：虚线框可点，点击上传 -->
+          <view class="slot-empty" wx:else data-slot="{{index + 1}}" bindtap="chooseSlotBg">
+            <text class="slot-placeholder">🖼️</text>
+            <text class="slot-empty-text">{{uploadingSlot === index + 1 ? '上传中...' : '点击上传'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 本月额度 -->
+    <view class="section-card">
+      <view class="card-hd-row">
+        <text class="card-hd">📊 本月额度</text>
+        <text class="tag tag-info">下月重置</text>
+      </view>
+      <view class="quota-grid">
+        <view class="quota-block" wx:for="{{quotaItems}}" wx:key="key">
+          <text class="q-icon">{{item.icon}}</text>
+          <text class="q-name">{{item.label}}</text>
+          <view class="q-bar">
+            <view class="q-bar-inner" style="{{item.barStyle}}"></view>
+          </view>
+          <view class="q-num">
+            <text class="q-used">{{item.used}}</text>
+            <text class="q-sep">/</text>
+            <text class="q-max">{{item.max}}</text>
+            <text class="q-unit">{{item.unit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- VIP 会员权益 -->
+    <view class="section-card vip-card">
+      <view class="card-hd-row">
+        <text class="card-hd vip-hd">👑 我的会员权益</text>
+        <text class="vip-link" wx:if="{{!vipMaxed}}" bindtap="openVipDialog">升级 →</text>
+      </view>
+      <view class="vip-body">
+        <text class="vip-crown">👑</text>
+        <text class="vip-tier-name">{{vipTier.name}}</text>
+        <text class="vip-tier-desc">{{vipTier.desc}}</text>
+        <view class="vip-benefits">
+          <view class="benefit-item" wx:for="{{vipTier.benefits}}" wx:key="index">
+            <view class="benefit-dot"></view>
+            <text>{{item}}</text>
+          </view>
+          <text class="benefit-empty" wx:if="{{!vipTier.benefits.length}}">升级 VIP 查看专属权益</text>
+        </view>
+        <button class="btn btn-block upgrade-btn" wx:if="{{!vipMaxed}}" bindtap="openVipDialog">升级 VIP</button>
+        <view class="vip-maxed-tip" wx:else>✨ 已是最高等级会员</view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<!-- VIP 方案弹窗 -->
+<view class="sheet-mask" wx:if="{{showVipDialog}}" bindtap="closeVipDialog">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">选择 VIP 方案</text>
+      <text class="modal-close" bindtap="closeVipDialog">✕</text>
+    </view>
+    <view class="sheet-body">
+      <view class="vip-dialog-empty" wx:if="{{!vipPlans.length}}">暂无可用方案</view>
+      <view class="vip-plan-card {{item.featured ? 'vip-plan-featured' : ''}} {{item.isExact ? 'vip-plan-owned' : ''}}"
+        wx:for="{{vipPlans}}" wx:key="id" wx:for-item="item" wx:for-index="planIndex">
+        <text class="plan-icon">{{item.icon}}</text>
+        <text class="plan-name">{{item.name}}</text>
+        <text class="plan-owned-badge" wx:if="{{item.isExact}}">当前等级</text>
+        <text class="plan-included-badge" wx:if="{{item.isLower}}">已包含</text>
+        <view class="plan-price">
+          <text class="currency">¥</text>
+          <text class="amount">{{item.price}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="plan-benefit" wx:for="{{item.benefits}}" wx:for-item="b" wx:for-index="bi"
+          wx:key="bi">
+          <view class="benefit-dot"></view>
+          <text class="plan-benefit-text">{{b}}</text>
+        </view>
+        <button class="btn btn-block {{item.isExact || item.isLower ? 'btn-default' : (item.featured ? 'btn-warning' : 'btn-primary')}}"
+          data-index="{{planIndex}}" bindtap="handleVipBuy"
+          disabled="{{vipBuyLoading === item.id || item.isExact || item.isLower}}">
+          {{vipBuyLoading === item.id ? '处理中...' : (item.isExact ? '当前等级' : (item.isLower ? '已包含' : (item.featured ? '立即开通' : '选择')))}}
+        </button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

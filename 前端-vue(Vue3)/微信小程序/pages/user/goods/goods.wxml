@@ -1,0 +1,144 @@
+<!--pages/user/goods/goods.wxml — 用户中心（个人入口 + 商品浏览）-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <view class="page-header">
+    <text class="page-title">用户中心</text>
+    <view class="balance-badge" wx:if="{{isLoggedIn}}">
+      <text class="balance-label">余额</text>
+      <text class="balance-value">¥{{balance}}</text>
+    </view>
+  </view>
+
+  <!-- 个人中心入口（对应原 Vue UserLayout 的侧边导航）
+       未登录时点击任一入口会自动走微信一键登录，无需额外的提示条 -->
+
+  <view class="user-nav">
+    <view class="unav-item" data-path="/pages/user/info/info" bindtap="goPage">
+      <text class="unav-icon">👤</text>
+      <text class="unav-text">我的资料</text>
+    </view>
+    <view class="unav-item" data-path="/pages/user/vip/vip" bindtap="goPage">
+      <text class="unav-icon">👑</text>
+      <text class="unav-text">VIP 会员</text>
+    </view>
+    <view class="unav-item" data-path="/pages/user/bg/bg" bindtap="goPage">
+      <text class="unav-icon">🖼️</text>
+      <text class="unav-text">我的主页</text>
+    </view>
+    <view class="unav-item" data-path="/pages/user/address/address" bindtap="goPage">
+      <text class="unav-icon">📍</text>
+      <text class="unav-text">收货地址</text>
+    </view>
+    <view class="unav-item" data-path="/pages/user/trade/trade" bindtap="goPage">
+      <text class="unav-icon">📋</text>
+      <text class="unav-text">下单记录</text>
+    </view>
+    <view class="unav-item" data-path="/pages/user/cart/cart" bindtap="goPage">
+      <view class="unav-icon-wrap">
+        <text class="unav-icon">🛍️</text>
+        <!-- 购物车角标：本页入口上的红点（与 tabBar 无关） -->
+        <text class="unav-badge" wx:if="{{cartBadge > 0}}">{{cartBadge}}</text>
+      </view>
+      <text class="unav-text">购物车</text>
+    </view>
+  </view>
+
+  <!-- 商品浏览 -->
+  <view class="section-header">
+    <text class="section-title">商品浏览</text>
+    <text class="section-more" bindtap="goSearch">搜索 ›</text>
+  </view>
+
+  <!-- 搜索栏：使用小程序推荐的 search 语义（input + confirm-type="search"）
+       详细筛选条件在独立搜索页完成 -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      type="text"
+      confirm-type="search"
+      placeholder="搜索商品名称"
+      placeholder-class="input-placeholder"
+      value="{{search.goodsName}}"
+      bindinput="onQuickSearchInput"
+      bindconfirm="onQuickSearch"
+    />
+    <button class="btn btn-sm btn-primary" bindtap="onQuickSearch">搜索</button>
+  </view>
+
+  <!-- 生效中的搜索条件（有则在列表页展示，并提供清除） -->
+  <view class="chips" wx:if="{{activeChips.length}}">
+    <view class="chip" wx:for="{{activeChips}}" wx:key="key" data-key="{{item.key}}" bindtap="removeChip">
+      <text>{{item.text}}</text>
+      <text class="chip-x">✕</text>
+    </view>
+    <view class="chip chip-clear" bindtap="handleReset">
+      <text>清空</text>
+    </view>
+  </view>
+
+  <!-- 缓存兜底提示 -->
+  <view class="cache-tip" wx:if="{{usingCache}}">
+    <text>⚠️ 网络不可用，正在展示本地缓存的商品信息</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <!-- 商品网格 -->
+  <view class="goods-grid">
+    <!-- 纯浏览态：点击整卡进入详情页，卡上不做任何操作 -->
+    <view class="goods-card" wx:for="{{goodsList}}" wx:key="id"
+      data-id="{{item.id}}" bindtap="goDetail">
+      <view class="goods-img-wrap">
+        <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imagePath}}" mode="aspectFill" />
+        <text wx:else class="goods-img-placeholder">暂无图片</text>
+      </view>
+      <view class="goods-info">
+        <view class="goods-name-row">
+          <text class="goods-name">{{item.goodsName}}</text>
+          <text class="demo-badge" wx:if="{{item.isDemo}}">演示</text>
+        </view>
+        <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+        <view class="goods-price-row">
+          <text class="goods-price">¥{{item.goodsPriceText}}</text>
+          <text class="goods-stock">库存 {{item.goodsStock}}</text>
+        </view>
+
+        <view class="merchant-info" data-id="{{item.merchantId || item.userId}}" catchtap="goMerchant">
+          <view class="merchant-avatar">
+            <!-- merchantMap 按 userName 索引，可能未命中，不能直接取 .avatarPath（会渲染报错） -->
+            <image wx:if="{{item.merchantAvatar}}" class="avatar-img"
+              src="{{item.merchantAvatar}}" mode="aspectFill" />
+            <text wx:else class="avatar-ph">👤</text>
+          </view>
+          <view class="merchant-detail">
+            <text class="merchant-name">{{item.userName}}</text>
+            <text class="merchant-addr" wx:if="{{item.address}}">📍 {{item.address}}</text>
+          </view>
+        </view>
+
+        <!-- 仅展示已购数量 + 详情入口提示 -->
+        <view class="goods-actions">
+          <text class="goods-added" wx:if="{{item.cartQuantity > 0}}">🛒 已购 {{item.cartQuantity}} 件</text>
+          <text class="goods-added-ph" wx:else>未购买</text>
+          <text class="goods-detail-hint">查看详情 ›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !goodsList.length}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">暂无商品</text>
+  </view>
+
+  <!-- 分页 -->
+  <view class="pagination" wx:if="{{total > 0}}">
+    <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+    <text class="page-text">{{pageNum}} / {{pages}} 页 · 共 {{total}} 条</text>
+    <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

@@ -1,0 +1,12 @@
+<!--components/confirm-dialog/index.wxml — 深色主题确认弹窗-->
+<view class="cd-mask" wx:if="{{visible}}" bindtap="onMaskTap">
+  <view class="cd-box" catchtap="noop">
+    <text class="cd-title" wx:if="{{title}}">{{title}}</text>
+    <text class="cd-message" wx:if="{{message}}">{{message}}</text>
+
+    <view class="cd-footer">
+      <button class="cd-btn cd-btn-cancel" wx:if="{{showCancel}}" bindtap="onCancel">{{cancelText}}</button>
+      <button class="cd-btn {{danger ? 'cd-btn-danger' : 'cd-btn-confirm'}}" bindtap="onConfirm">{{confirmText}}</button>
+    </view>
+  </view>
+</view>

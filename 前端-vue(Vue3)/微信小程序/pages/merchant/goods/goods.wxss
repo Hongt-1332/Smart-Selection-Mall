@@ -1,0 +1,179 @@
+/* pages/merchant/goods/goods.wxss
+ * 颜色统一使用 app.wxss 的主题变量。
+ * 布局按小程序习惯：搜索栏 → 工具栏 → 横向卡片列表。
+ */
+
+/* 说明：原先「添加 / 编辑商品」的弹层样式（.goods-sheet / .submit-actions / 发货地址下拉 / 图片预览）
+ * 已全部迁移到独立页面 pages/merchant/goods-edit/goods-edit.wxss。
+ * 弹层方案在小程序里固定提交栏始终无法稳定显示，故弃用。 */
+
+
+/* ===== 搜索栏 ===== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.search-bar .search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-picker {
+  flex-shrink: 0;
+}
+
+.picker-btn {
+  height: 72rpx;
+  padding: 0 24rpx;
+  display: flex;
+  align-items: center;
+  background: var(--bg-input);
+  border: 1rpx solid var(--border-input);
+  border-radius: 12rpx;
+  color: var(--text-regular);
+  font-size: 26rpx;
+  white-space: nowrap;
+}
+
+/* ===== 工具栏 =====
+ * 第一行：搜索 / 重置 等宽并排，两个合力铺满整行
+ * 第二行：添加 独占一行（整宽）
+ *
+ * 注意：小程序里 button 默认是块级元素。必须显式
+ * display:flex + flex:1 才能让它们在同一行且各占一半。
+ */
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+/* 同行按钮等分铺满：各占一半宽度，撑满整行 */
+.toolbar .btn {
+  display: flex;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 72rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+}
+
+/* 独占一行的按钮铺满整宽 */
+.toolbar .btn-block {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+/* 统计信息行 */
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.toolbar-info {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ===== 商品卡片（横向布局） ===== */
+.gc-card {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 18rpx rgba(0, 0, 0, 0.05);
+}
+
+.gc-thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 14rpx;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gc-thumb-img { width: 100%; height: 100%; }
+
+.gc-thumb-ph {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+.gc-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.gc-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.gc-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gc-desc {
+  font-size: 23rpx;
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gc-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 20rpx;
+}
+
+.gc-price {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.gc-stock {
+  font-size: 23rpx;
+  color: var(--text-secondary);
+}
+
+.gc-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  margin-top: auto;
+  padding-top: 14rpx;
+  border-top: 1rpx solid var(--border-base);
+}

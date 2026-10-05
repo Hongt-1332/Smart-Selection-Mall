@@ -1,0 +1,9 @@
+{
+  "name": "ismartshop-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mini program automated UI tests (miniprogram-automator)",
+  "dependencies": {
+    "miniprogram-automator": "^0.12.1"
+  }
+}

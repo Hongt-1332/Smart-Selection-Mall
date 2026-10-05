@@ -1,0 +1,121 @@
+<!--pages/user/cart/cart.wxml — 购物车-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page cart-page">
+  <view class="page-header">
+    <text class="page-title">购物车</text>
+    <view class="balance-badge">
+      <text class="balance-label">余额</text>
+      <text class="balance-value">¥{{balance}}</text>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <!-- 购物车列表：卡片 = 上行（选择框+图片+信息） + 下行（数量+删除，整卡宽） -->
+  <view class="ct-item {{item.selected ? 'ct-item-selected' : ''}}"
+    wx:for="{{cartList}}" wx:key="cartId">
+
+    <!-- 上半区：选择框 + 图片 + 文字信息 -->
+    <view class="ct-top">
+      <!-- 选择框：item.selected 由 JS 预计算，模板只做简单绑定 -->
+      <view class="ct-check" data-id="{{item.cartId}}" bindtap="toggleSelect">
+        <view class="checkbox {{item.selected ? 'checkbox-checked' : ''}}">
+          <text wx:if="{{item.selected}}" class="checkbox-mark">✓</text>
+        </view>
+      </view>
+
+      <!-- 商品图（点击进详情） -->
+      <view class="ct-thumb" data-id="{{item.id}}" bindtap="goDetail">
+        <image wx:if="{{item.imagePath}}" class="ct-thumb-img" src="{{item.imagePath}}" mode="aspectFill" />
+        <text wx:else class="ct-thumb-ph">暂无图</text>
+      </view>
+
+      <!-- 主体信息 -->
+      <view class="ct-main">
+        <view class="ct-title-row">
+          <text class="ct-name" data-id="{{item.id}}" bindtap="goDetail">{{item.goodsName}}</text>
+          <text class="tag tag-info" wx:if="{{item.offline}}">已下架</text>
+        </view>
+
+        <text class="ct-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+
+        <!-- 价格 + 库存 -->
+        <view class="ct-price-row">
+          <text class="ct-price">¥{{item.goodsPriceText}}</text>
+          <text class="ct-stock">库存 {{item.goodsStock}}</text>
+        </view>
+
+        <!-- 小计：单独一行 -->
+        <view class="ct-sum-row">
+          <text class="ct-sum-label">小计</text>
+          <text class="ct-sum-value">¥{{item.subtotalText}}</text>
+        </view>
+
+        <!-- 商户（点击进店铺） -->
+        <view class="ct-merchant" data-id="{{item.merchantId || item.userId}}" bindtap="goMerchant">
+          <view class="ct-merchant-avatar">
+            <image wx:if="{{item.merchantAvatar}}" class="avatar-img" src="{{item.merchantAvatar}}" mode="aspectFill" />
+            <text wx:else class="avatar-ph">👤</text>
+          </view>
+          <text class="ct-merchant-name">{{item.userName || '未知商家'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 下半区：操作行，占满整卡宽度（不再挤在图片右侧的窄列里） -->
+    <view class="ct-actions">
+      <view class="qty-control">
+        <button class="qty-btn" data-id="{{item.cartId}}" bindtap="onDecrease">−</button>
+        <text class="qty-num qty-num-active">{{item.quantity}}</text>
+        <button class="qty-btn" data-id="{{item.cartId}}" bindtap="onIncrease"
+          disabled="{{item.reachStockLimit || item.offline}}">+</button>
+      </view>
+      <button class="ct-del" data-id="{{item.cartId}}" bindtap="handleDelete">删除</button>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !cartList.length}}">
+    <text class="empty-icon">🛒</text>
+    <text class="empty-text">购物车是空的</text>
+    <button class="btn btn-sm btn-primary" bindtap="goShopping">去逛逛</button>
+  </view>
+
+  <view class="pagination" wx:if="{{pages > 1}}">
+    <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+    <text class="page-text">{{pageNum}} / {{pages}} 页</text>
+    <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+  </view>
+
+  <!-- 底部操作栏（两行，适配窄屏）
+       第一行：全选 + 合计金额
+       第二行：删除 + 结算 -->
+  <view class="cart-bar" wx:if="{{cartList.length > 0}}">
+    <view class="cb-row">
+      <view class="cb-left" bindtap="toggleSelectAll">
+        <view class="checkbox {{selectAll ? 'checkbox-checked' : ''}}">
+          <text wx:if="{{selectAll}}" class="checkbox-mark">✓</text>
+        </view>
+        <text class="cb-label">全选</text>
+      </view>
+
+      <view class="cb-total">
+        <text class="cb-total-label">合计</text>
+        <text class="cb-total-value">¥{{selectedTotal}}</text>
+      </view>
+    </view>
+
+    <view class="cb-row">
+      <button class="cb-del-btn" bindtap="handleBatchDelete"
+        disabled="{{selectedIds.length === 0}}">删除{{selectedIds.length ? '(' + selectedIds.length + ')' : ''}}</button>
+
+      <!-- 结算(N)：N 为已选商品种类数；括号外再标总件数，避免与数量混淆 -->
+      <button class="btn btn-primary cb-btn" bindtap="handleBuy" disabled="{{selectedIds.length === 0}}">
+        结算{{selectedIds.length ? '(' + selectedCount + ')' : ''}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

@@ -1,0 +1,754 @@
+/**app.wxss — 全局样式（迁移自原项目 assets/main.css 的暗色主题）
+ *
+ * 主题策略：全站固定深色（原项目设计），不跟随系统浅色模式。
+ * 所有颜色走 CSS 变量，变量只有一套深色值；
+ * 导航栏 / tabBar / 窗口背景由 theme.json 提供，light 与 dark 两组值相同。
+ **/
+page {
+  /* ===== 背景 / 文字 ===== */
+  --bg-page: #0a0c10;
+  --bg-card: rgba(20, 22, 30, 0.6);
+  --bg-card-solid: #14161e;
+  --bg-elevated: rgba(26, 28, 36, 0.5);
+  --bg-input: rgba(255, 255, 255, 0.04);
+  --bg-soft: rgba(255, 255, 255, 0.03);
+  --bg-hover: rgba(255, 255, 255, 0.08);
+
+  /* ===== 边框 / 分割线 ===== */
+  --border-base: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.1);
+  --border-input: rgba(255, 255, 255, 0.08);
+
+  /* ===== 文字色阶 ===== */
+  --text-primary: #e5e6e8;
+  --text-strong: #f1f2f4;
+  --text-regular: #c0c4cc;
+  --text-secondary: #909399;
+  --text-placeholder: rgba(255, 255, 255, 0.2);
+  --text-muted: #8890a0;
+
+  /* ===== 主题色 ===== */
+  --brand: #5b9eff;
+  --brand-deep: #5b8def;
+  --danger: #f56c6c;
+  --success: #67c23a;
+  --warning: #e6a23c;
+
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-size: 28rpx;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, sans-serif;
+  min-height: 100%;
+}
+
+/* 盒模型统一：恢复全局标签选择器。
+ * 说明：星空组件的问题根因是层叠上下文（已用 :host 方案修复），
+ * 与 box-sizing 无关（星星是绝对定位且无 padding，两种盒模型渲染一致）。
+ * 而上一版改成的 `page view` 后代选择器在 app.wxss 中不生效，
+ * 导致所有页面失去 border-box、输入框等宽度溢出 —— 必须还原。 */
+view,
+text,
+button,
+input,
+textarea,
+scroll-view,
+swiper,
+swiper-item,
+image {
+  box-sizing: border-box;
+}
+
+/* ===== 星空背景组件宿主 =====
+ * 这层规则是「保险」：组件自身的 :host 在 styleIsolation 变化时不一定会生效，
+ * 一旦 position / pointer-events 丢失，这个铺满全屏的层就会盖住自定义 tabBar，
+ * 表现为「底部导航栏全都点不了」。这里用标签选择器再兜一次底。
+ */
+background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  display: block;
+}
+
+/* ===== 通用页面容器 ===== */
+.page {
+  min-height: 100vh;
+  padding: 24rpx;
+  /* 底部留出自定义 tabBar 的高度（110rpx + 安全区），避免内容被遮住 */
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+  /* 星空特效是全站背景（fixed + z-index:1），
+     容器必须透明且高于特效层，星星才能透出来 */
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+/* tabBar 页（首页 / 用户中心 / 商户中心 / 关于）的根容器同样需要底部留白 */
+.tabbar-page-pad {
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+.page-title {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+  letter-spacing: 1rpx;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 20rpx;
+  padding: 24rpx;
+}
+
+/* ===== 按钮 ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  padding: 0 32rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  line-height: 1;
+}
+.btn::after { border: none; }
+
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+}
+.btn-primary-hover { opacity: 0.9; }
+
+.btn-default {
+  background: var(--bg-hover);
+  border: 1rpx solid var(--border-strong);
+  color: var(--text-regular);
+}
+
+.btn-danger {
+  background: rgba(245, 108, 108, 0.15);
+  border: 1rpx solid rgba(245, 108, 108, 0.3);
+  color: var(--danger);
+}
+
+.btn-success {
+  background: rgba(103, 194, 58, 0.15);
+  border: 1rpx solid rgba(103, 194, 58, 0.3);
+  color: var(--success);
+}
+
+.btn-warning {
+  background: rgba(230, 162, 60, 0.15);
+  border: 1rpx solid rgba(230, 162, 60, 0.3);
+  color: var(--warning);
+}
+
+/* 强调按钮：使用与全站一致的品牌蓝渐变。
+ * 原值为 Vue 项目遗留的紫色 (#5b8def → #5b9eff)，
+ * 与深色蓝调主题不搭，统一改为主色系。 */
+.btn-gradient {
+  background: linear-gradient(135deg, #5b9eff, #5b8def);
+  color: #fff;
+}
+
+.btn-block { width: 100%; }
+
+.btn-sm {
+  height: 56rpx;
+  padding: 0 20rpx;
+  font-size: 24rpx;
+}
+
+/* 超小按钮：用于搜索/重置等高频次要操作，避免占满整行 */
+.btn-xs {
+  height: 52rpx;
+  padding: 0 22rpx;
+  font-size: 24rpx;
+  border-radius: 10rpx;
+  font-weight: 500;
+}
+
+.btn[disabled], .btn-disabled {
+  opacity: 0.45;
+}
+
+/* ===== 表单输入 ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-bottom: 24rpx;
+}
+
+.field-label {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  height: 76rpx;
+  padding: 0 22rpx;
+  background: var(--bg-input);
+  border: 1rpx solid var(--border-input);
+  border-radius: 12rpx;
+  color: var(--text-primary);
+  font-size: 28rpx;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 150rpx;
+  padding: 18rpx 22rpx;
+  background: var(--bg-input);
+  border: 1rpx solid var(--border-input);
+  border-radius: 12rpx;
+  color: var(--text-primary);
+  font-size: 28rpx;
+}
+
+.input-placeholder { color: var(--text-placeholder); }
+
+/* ===== 搜索栏 ===== */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 240rpx;
+  height: 72rpx;
+  padding: 0 22rpx;
+  background: var(--bg-input);
+  border: 1rpx solid var(--border-input);
+  border-radius: 12rpx;
+  color: var(--text-primary);
+  font-size: 26rpx;
+}
+
+/* ===== 商品网格 ===== */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.goods-card {
+  width: calc((100% - 20rpx) / 2);
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.goods-img-wrap {
+  width: 100%;
+  height: 300rpx;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goods-img { width: 100%; height: 100%; }
+
+.goods-img-placeholder {
+  color: var(--text-secondary);
+  font-size: 24rpx;
+}
+
+.goods-info { padding: 16rpx; }
+
+.goods-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 6rpx;
+}
+
+.goods-desc {
+  display: block;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 10rpx;
+}
+
+.goods-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.goods-price {
+  color: var(--danger);
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.goods-stock {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.goods-cart-badge {
+  font-size: 22rpx;
+  color: var(--success);
+}
+
+/* ===== 商品卡操作区（浏览态） ===== */
+.goods-actions {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 16rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx solid var(--border-base);
+}
+
+/* 已购数量，占满左侧空间把「查看详情」推到右边 */
+.goods-added,
+.goods-added-ph {
+  flex: 1;
+  min-width: 0;
+  font-size: 20rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.goods-added { color: var(--success); }
+.goods-added-ph { color: var(--text-muted); }
+
+/* 详情入口提示（纯文字，非按钮） */
+.goods-detail-hint {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  color: var(--brand-deep);
+}
+
+/* ===== 商品名 + 演示标记 ===== */
+.goods-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 6rpx;
+}
+
+.goods-name-row .goods-name {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.demo-badge {
+  flex-shrink: 0;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
+  background: rgba(91, 158, 255, 0.18);
+  border: 1rpx solid rgba(91, 158, 255, 0.35);
+  color: var(--brand);
+  font-size: 18rpx;
+  line-height: 1.6;
+}
+
+/* ===== 数量控制 =====
+ * 尺寸按场景区分：
+ *   .qty-control 用于弹层/详情页等宽松区域
+ *   .qty-control-sm 用于商品卡等紧凑区域
+ */
+.qty-control,
+.qty-control-sm {
+  display: flex;
+  align-items: center;
+}
+
+.qty-btn {
+  width: 44rpx;
+  height: 44rpx;
+  padding: 0;
+  border: 1rpx solid var(--border-strong);
+  background: var(--bg-input);
+  color: var(--text-regular);
+  font-size: 26rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+}
+.qty-btn::after { border: none; }
+
+/* 紧凑版：商品卡内使用，进一步缩小 */
+.qty-control-sm .qty-btn {
+  width: 34rpx;
+  height: 34rpx;
+  font-size: 22rpx;
+  border-radius: 6rpx;
+}
+
+.qty-num {
+  min-width: 48rpx;
+  text-align: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qty-control-sm .qty-num {
+  min-width: 40rpx;
+  font-size: 22rpx;
+}
+
+.qty-num-active { color: var(--brand-deep); }
+
+/* ===== 标签 ===== */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.tag-success { background: rgba(103,194,58,0.15); color: var(--success); border: 1rpx solid rgba(103,194,58,0.3); }
+.tag-danger  { background: rgba(245,108,108,0.15); color: var(--danger); border: 1rpx solid rgba(245,108,108,0.3); }
+.tag-warning { background: rgba(230,162,60,0.15);  color: var(--warning); border: 1rpx solid rgba(230,162,60,0.3); }
+.tag-info    { background: var(--bg-hover); color: var(--text-secondary); border: 1rpx solid var(--border-strong); }
+.tag-primary { background: rgba(91,158,255,0.15);  color: var(--brand); border: 1rpx solid rgba(91,158,255,0.3); }
+
+/* ===== 列表行 ===== */
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+/* ===== 分隔线 ===== */
+.divider {
+  height: 1rpx;
+  background: var(--border-base);
+  margin: 20rpx 0;
+}
+
+/* ===== 分页 ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 28rpx 0;
+}
+
+.page-text {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* ===== 空状态 ===== */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+  gap: 12rpx;
+}
+
+.empty-icon { font-size: 80rpx; }
+.empty-text { font-size: 26rpx; color: var(--text-secondary); }
+
+/* ===== 加载 ===== */
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+  font-size: 26rpx;
+}
+
+/* ===== 余额徽标 ===== */
+.balance-badge {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  background: linear-gradient(135deg, #fef3e2, #fdebd0);
+  border: 1rpx solid #f5dab1;
+  border-radius: 30rpx;
+  padding: 6rpx 22rpx;
+  flex-shrink: 0;
+}
+
+.balance-label { font-size: 22rpx; color: #b88230; }
+.balance-value { font-size: 28rpx; font-weight: 700; color: #e6a23c; }
+
+/* ===== 页头 ===== */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+  gap: 16rpx;
+}
+
+/* 居中标题页头：标题单独一行居中（商户中心各管理页使用） */
+.page-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.page-title-center {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1rpx;
+  text-align: center;
+}
+
+/* ===== 居中弹窗 =====
+ * 与底部弹层保持同一套配色策略：实色底 + 内部专用变量。
+ */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 上下留白 + 安全区，保证弹窗完整可见 */
+  padding: 40rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.modal {
+  width: 100%;
+  max-height: 100%;
+  background: var(--bg-card-solid);
+  border: 1rpx solid var(--border-input);
+  border-radius: 24rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  --sheet-bg: #14161e;
+  --sheet-soft: rgba(255, 255, 255, 0.05);
+  --sheet-hover: rgba(255, 255, 255, 0.09);
+}
+
+.modal-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 30rpx;
+  border-bottom: 1rpx solid var(--border-base);
+}
+
+.modal-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.modal-close {
+  font-size: 32rpx;
+  color: var(--text-muted);
+  padding: 0 10rpx;
+}
+
+.modal-body {
+  flex: 1;
+  min-height: 0;
+  padding: 24rpx 30rpx;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx 28rpx;
+  border-top: 1rpx solid var(--border-base);
+}
+
+/* ===== 底部弹层 =====
+ * 弹层是一块「独立完整」的视觉层：
+ * 使用不透明实色底 + 内部专用变量，避免页面半透明玻璃质感透到弹层里，
+ * 造成「弹窗颜色和页面不统一」的观感。
+ */
+.sheet-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* 关键：弹层使用「固定头尾 + 中间滚动」的弹性布局。
+ * 之前是整块 overflow-y: auto，导致底部按钮被滚出视口而无法点击。 */
+.sheet {
+  width: 100%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card-solid);
+  border-radius: 30rpx 30rpx 0 0;
+  border-top: 1rpx solid var(--border-input);
+  /* 底部安全区，避免按钮被 Home Indicator 遮挡 */
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+  overflow: hidden;
+  /* 弹层内重新定义一套底色，保证内部元素与弹层底色协调 */
+  --sheet-bg: #14161e;
+  --sheet-soft: rgba(255, 255, 255, 0.05);
+  --sheet-hover: rgba(255, 255, 255, 0.09);
+}
+
+.sheet-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 30rpx;
+  border-bottom: 1rpx solid var(--border-base);
+}
+
+.sheet-title { font-size: 30rpx; font-weight: 700; color: var(--text-strong); }
+
+/* 只有内容区滚动，头尾始终可见 */
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24rpx 30rpx;
+}
+
+.sheet-footer {
+  flex-shrink: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx 28rpx;
+  /* 底部操作区加分隔，与内容区分开 */
+  border-top: 1rpx solid var(--border-base);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ===== 弹层内的通用元素（统一配色） ===== */
+
+/* 弹层内的字段输入 */
+.sheet .input,
+.sheet .textarea,
+.sheet .search-input {
+  background: var(--sheet-soft, rgba(255, 255, 255, 0.05));
+  border-color: var(--border-input);
+  color: var(--text-primary);
+}
+
+/* 弹层内的分隔线 */
+.sheet .divider {
+  background: var(--border-base);
+}
+
+/* 弹层内的列表项 */
+.sheet .addr-item {
+  border: 1rpx solid transparent;
+  border-radius: 14rpx;
+}
+
+.sheet .addr-item-active {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* 弹层内的次要按钮：底色比页面深一点，避免和弹层底融为一体 */
+.sheet .btn-default {
+  background: var(--sheet-hover, rgba(255, 255, 255, 0.09));
+  border-color: var(--border-strong);
+  color: var(--text-regular);
+}
+
+/* 弹层内的空态 */
+.sheet .empty {
+  padding: 60rpx 40rpx;
+}
+
+/* ===== 文字工具类 ===== */
+.text-muted { color: var(--text-secondary); }
+.text-danger { color: var(--danger); }
+.text-primary { color: var(--brand); }
+.text-warning { color: var(--warning); }
+.text-success { color: var(--success); }
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+.flex { display: flex; }
+.flex-1 { flex: 1; min-width: 0; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.gap-sm { gap: 12rpx; }
+.gap-md { gap: 20rpx; }
+
+/* ===== 表单弹窗内的行内字段 ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.form-label {
+  width: 180rpx;
+  font-size: 26rpx;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+ * 全站固定深色主题（原项目设计）。
+ *
+ * 说明：曾经在这里有一段 @media (prefers-color-scheme: light)
+ * 的浅色变量覆盖，导致系统浅色模式下全站变白底 —— 已按需求移除。
+ * 现在任何系统主题下，页面都是上面的深色默认值，不再翻转。
+ * theme.json 中 light/dark 两组值也已统一为深色，
+ * 因此导航栏 / tabBar / 窗口背景同样恒为深色。
+ * ============================================================ */

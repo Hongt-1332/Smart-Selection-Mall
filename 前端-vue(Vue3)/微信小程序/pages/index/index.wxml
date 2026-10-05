@@ -1,0 +1,120 @@
+﻿<!--pages/index/index.wxml — 首页（Banner + 快捷入口 + 推荐商品轮播）-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="home">
+  <!-- 主 Banner：有图时轮播；无图时用渐变底板兜底（不引用外链图片）
+       注意：swiper 在 iOS 上是原生组件，永远盖在普通视图之上，
+       z-index 无效，会吞掉与其重叠区域的点击。
+       因此 banner-content 不允许与 swiper 重叠（不能用负 margin 压上去），
+       两者必须是上下相邻的独立块，否则「去购物」按钮在真机上点不动。 -->
+  <view class="banner-box">
+    <block wx:if="{{bannerImgs.length}}">
+      <swiper
+        class="banner"
+        indicator-dots="{{true}}"
+        indicator-color="rgba(255,255,255,0.3)"
+        indicator-active-color="#ffffff"
+        autoplay="{{bannerImgs.length > 1}}"
+        interval="4000"
+        duration="500"
+        circular="{{bannerImgs.length > 1}}"
+        bindchange="onBannerSwiperChange"
+      >
+        <!-- bannerImgs 是字符串数组，wx:key 用 *this -->
+        <swiper-item wx:for="{{bannerImgs}}" wx:key="*this">
+          <image class="banner-img" src="{{item}}" mode="aspectFill" />
+        </swiper-item>
+      </swiper>
+    </block>
+    <view class="banner banner-fallback" wx:else></view>
+
+    <view class="banner-content">
+      <text class="banner-title">优选好物，尽在掌中</text>
+      <text class="banner-subtitle">品质生活 · 一站直达</text>
+      <button class="btn banner-btn" bindtap="goUser">去购物</button>
+    </view>
+  </view>
+
+  <!-- 快捷入口：2×2 网格，4 个入口一次性展示 -->
+  <view class="quick-entry">
+    <view class="entry-card" wx:for="{{entries}}" wx:key="title"
+      data-index="{{index}}" bindtap="goEntry">
+      <text class="entry-icon">{{item.icon}}</text>
+      <text class="entry-title">{{item.title}}</text>
+      <text class="entry-badge" wx:if="{{item.badgeCount > 0}}">{{item.badgeCount}}</text>
+    </view>
+  </view>
+
+  <!-- 推荐商品 -->
+  <view class="section-header">
+    <text class="section-title">推荐商品</text>
+    <text class="section-more" bindtap="goSearch">搜索 ›</text>
+  </view>
+
+  <!-- 缓存兜底提示 -->
+  <view class="cache-tip" wx:if="{{usingCache}}">
+    <text>⚠️ 网络不可用，正在展示本地缓存的商品信息</text>
+  </view>
+
+  <!-- 推荐商品轮播：单卡轮播，自动循环 + 手动拖拽。
+       注意：不要给 swiper 加 next-margin/previous-margin 露边距 ——
+       「circular 循环 + 露边距」是微信 swiper 的已知缺陷组合，
+       滑到最右一屏后拖拽会卡死。如需露边效果须放弃 circular。 -->
+  <view class="rec-wrap" wx:if="{{goodsList.length}}">
+    <swiper
+      class="rec-swiper"
+      autoplay="{{goodsList.length > 1}}"
+      interval="3500"
+      duration="450"
+      circular="{{goodsList.length > 1}}"
+      bindchange="onRecSwiperChange"
+    >
+      <swiper-item class="rec-item" wx:for="{{goodsList}}" wx:key="id">
+        <view class="goods-card" data-id="{{item.id}}" bindtap="goDetail">
+          <view class="goods-img-wrap">
+            <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imagePath}}" mode="aspectFill" />
+            <text wx:else class="goods-img-placeholder">暂无图片</text>
+            <text class="demo-badge" wx:if="{{item.isDemo}}">演示</text>
+          </view>
+          <view class="goods-info">
+            <text class="goods-name">{{item.goodsName}}</text>
+            <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+
+            <view class="goods-price-row">
+              <text class="goods-price">¥{{item.goodsPriceText}}</text>
+              <text class="goods-stock">库存 {{item.goodsStock}}</text>
+            </view>
+
+            <view class="merchant-info" data-id="{{item.merchantId || item.userId}}" catchtap="goMerchant">
+              <view class="merchant-avatar">
+                <image wx:if="{{item.merchantAvatar}}" class="avatar-img" src="{{item.merchantAvatar}}" mode="aspectFill" />
+                <text wx:else class="avatar-ph">👤</text>
+              </view>
+              <text class="merchant-name">{{item.userName}}</text>
+            </view>
+
+            <view class="goods-actions">
+              <text class="goods-added" wx:if="{{item.cartQuantity > 0}}">🛒 已购 {{item.cartQuantity}}</text>
+              <text class="goods-added-ph" wx:else>未购买</text>
+              <text class="goods-detail-hint">详情 ›</text>
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 自定义指示点：显示当前第几个 -->
+    <view class="rec-dots">
+      <view class="rec-dot {{recIdx === index ? 'rec-dot-active' : ''}}"
+        wx:for="{{goodsList}}" wx:key="id"></view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!goodsList.length}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">暂无商品</text>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

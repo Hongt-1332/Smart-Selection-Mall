@@ -1,0 +1,80 @@
+<!--pages/user/vip/vip.wxml — VIP 会员-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <text class="page-title">VIP 会员</text>
+
+  <!-- Banner -->
+  <view class="vip-banner">
+    <view class="vip-banner-content">
+      <text class="crown-icon">👑</text>
+      <text class="banner-h1">{{allMaxed ? '您已是最高等级会员' : '升级 VIP，解锁专属特权'}}</text>
+      <text class="banner-p">{{allMaxed ? '已享受全部会员特权，感谢您的支持' : (currentLevel > 0 ? '当前等级：Lv.' + currentLevel + '，可继续升级解锁更多特权' : '您当前是普通用户，享受更多商品折扣、优先发货、专属客服等尊享服务')}}</text>
+    </view>
+  </view>
+
+  <!-- 套餐 -->
+  <view class="vip-plans">
+    <view class="plan-card {{item.featured ? 'plan-featured' : ''}} {{item.isExact ? 'plan-owned' : ''}}" wx:for="{{plans}}" wx:key="id"
+      wx:for-item="item" wx:for-index="planIndex">
+      <text class="plan-badge" wx:if="{{item.featured}}">最受欢迎</text>
+      <text class="plan-owned-badge" wx:if="{{item.isExact}}">当前等级</text>
+      <text class="plan-included-badge" wx:if="{{item.isLower}}">已包含</text>
+      <text class="plan-icon">{{item.icon}}</text>
+      <text class="plan-name">{{item.name}}</text>
+      <view class="plan-price">
+        <text class="currency">¥</text>
+        <text class="amount">{{item.price}}</text>
+        <text class="period">/ {{item.period}}</text>
+      </view>
+      <view class="divider"></view>
+      <!-- 外层用 plan 作为变量名，避免内层 wx:for 覆盖外层 item -->
+      <view class="plan-benefit" wx:for="{{item.benefits}}" wx:for-item="b" wx:for-index="bi"
+        wx:key="bi">
+        <text class="benefit-check">✓</text>
+        <text class="plan-benefit-text">{{b}}</text>
+      </view>
+      <button class="btn btn-block {{item.isExact || item.isLower ? 'btn-default' : (item.featured ? 'btn-warning' : 'btn-primary')}} plan-btn"
+        data-index="{{planIndex}}" bindtap="handleBuy"
+        disabled="{{loading === item.id || item.isExact || item.isLower}}">
+        {{item.isExact ? '当前等级' : (item.isLower ? '已包含' : (item.featured ? '立即开通' : '选择此方案'))}}
+      </button>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!plans.length}}">
+    <text class="empty-icon">👑</text>
+    <text class="empty-text">暂无可用方案</text>
+  </view>
+</view>
+
+<!-- 支付确认 -->
+<view class="sheet-mask" wx:if="{{payVisible}}" bindtap="closePay">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">确认购买</text>
+      <text class="modal-close" bindtap="closePay">✕</text>
+    </view>
+    <view class="sheet-body" wx:if="{{selectedPlan}}">
+      <view class="pay-info">
+        <text class="pay-plan-name">{{selectedPlan.icon}} {{selectedPlan.name}}</text>
+        <text class="pay-price">¥{{selectedPlan.price}}</text>
+        <text class="pay-duration">有效期：{{selectedPlan.period}}</text>
+      </view>
+      <view class="divider"></view>
+      <view class="plan-benefit" wx:for="{{selectedPlan.benefits}}" wx:key="*this">
+        <text class="benefit-check">✓</text>
+        <text class="plan-benefit-text">{{item}}</text>
+      </view>
+    </view>
+    <view class="sheet-footer">
+      <button class="btn btn-default flex-1" bindtap="closePay">取消</button>
+      <button class="btn btn-warning flex-1" bindtap="confirmPay" disabled="{{payLoading}}">
+        {{payLoading ? '支付中...' : '确认支付'}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

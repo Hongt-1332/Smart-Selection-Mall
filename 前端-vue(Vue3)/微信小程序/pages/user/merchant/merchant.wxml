@@ -1,0 +1,112 @@
+<!--pages/user/merchant/merchant.wxml — 商家主页-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <!-- 封面 -->
+  <view class="cover-section">
+    <view class="cover-bg">
+      <image wx:if="{{heroBgUrl}}" class="cover-image" src="{{heroBgUrl}}" mode="aspectFill" />
+    </view>
+    <view class="cover-overlay"></view>
+    <view class="cover-content">
+      <view class="avatar-box">
+        <image wx:if="{{merchantAvatar}}" class="avatar-img" src="{{merchantAvatar}}" mode="aspectFill" />
+        <text wx:else class="avatar-ph">👤</text>
+      </view>
+      <view class="cover-center">
+        <text class="cover-name">{{profile.userName}}</text>
+        <text class="cover-addr" wx:if="{{firstAddress}}">📍 {{firstAddress}}</text>
+        <view class="cover-tags">
+          <text class="tag-vip" wx:if="{{profile.level > 0}}">👑 VIP{{profile.level}} · {{profile.levelName}}</text>
+          <text class="tag-bg">🛍️ {{goodsList.length}} 件商品</text>
+        </view>
+      </view>
+      <view class="vip-card" wx:if="{{profile.level > 0}}">
+        <text class="vip-badge">VIP{{profile.level}}</text>
+        <text class="vip-name">{{profile.levelName}}</text>
+        <text class="vip-sub">尊享会员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 个人简介 -->
+  <view class="section" wx:if="{{profile.describe}}">
+    <text class="section-title">📝 个人简介</text>
+    <view class="intro-box">
+      <text class="intro-text">{{profile.describe}}</text>
+    </view>
+  </view>
+
+  <!-- 背景图片 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🖼️ 背景图片</text>
+      <view class="bg-nav" wx:if="{{bgImages.length > 4}}">
+        <button class="btn btn-sm btn-default" bindtap="bgPrev" disabled="{{bgOffset === 0}}">◀</button>
+        <text class="nav-info">{{bgOffset + 1}}-{{bgImages.length > bgOffset + 4 ? bgOffset + 4 : bgImages.length}} / {{bgImages.length}}</text>
+        <button class="btn btn-sm btn-default" bindtap="bgNext" disabled="{{bgOffset + 4 >= bgImages.length}}">▶</button>
+        <button class="btn btn-sm {{bgAutoPlay ? 'btn-primary' : 'btn-default'}}" bindtap="toggleAutoPlay">
+          {{bgAutoPlay ? '⏸' : '▶'}}
+        </button>
+      </view>
+    </view>
+
+    <view class="bg-gallery">
+      <view class="bg-card" wx:for="{{bgSlots}}" wx:key="index">
+        <block wx:if="{{item}}">
+          <image class="bg-card-img" src="{{item.url}}" mode="aspectFill"
+            data-url="{{item.url}}" bindtap="previewBg" />
+          <text class="bg-card-seq">{{item.sequence}}</text>
+        </block>
+        <view class="bg-placeholder" wx:else>
+          <text class="bg-ph-icon">🖼️</text>
+          <text class="bg-ph-text">暂无图片</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 在售商品 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🛍️ 在售商品</text>
+      <text class="goods-total">共 {{goodsList.length}} 件</text>
+    </view>
+
+    <view class="goods-grid" wx:if="{{goodsList.length > 0}}">
+      <view class="goods-card" wx:for="{{goodsList}}" wx:key="id"
+        data-id="{{item.id}}" bindtap="goDetail">
+        <view class="goods-img-wrap">
+          <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imageUrl}}" mode="aspectFill" />
+          <text wx:else class="goods-img-placeholder">暂无图片</text>
+        </view>
+        <view class="goods-info">
+          <text class="goods-name">{{item.goodsName}}</text>
+          <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+          <view class="goods-price-row">
+            <text class="goods-price">¥{{item.goodsPrice}}</text>
+            <text class="goods-stock">库存 {{item.goodsStock}}</text>
+          </view>
+
+          <!-- 与用户中心 / 首页统一的浏览态操作行：
+               不做行内加减购，交易操作收敛到商品详情页 -->
+          <view class="goods-actions">
+            <text class="goods-added" wx:if="{{item.cartQuantity > 0}}">🛒 已购 {{item.cartQuantity}} 件</text>
+            <text class="goods-added-ph" wx:else>未购买</text>
+            <text class="goods-detail-hint">查看详情 ›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:else>
+      <text class="empty-icon">📦</text>
+      <text class="empty-text">暂无在售商品</text>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

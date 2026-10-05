@@ -1,0 +1,23 @@
+<!--custom-tab-bar/index.wxml — 自定义 tabBar（符号图标版）-->
+<!--
+  说明：这里刻意使用普通 <view> 而不是 <cover-view>。
+  cover-view 是「原生层」组件，只有在 map / video / canvas 等原生组件上方
+  才需要它。在普通页面里使用会带来两个问题：
+    1. 在 glass-easel 框架下会吞掉触摸事件（表现为整页点击失效）；
+    2. 支持的 CSS 选择器极其有限，样式难以维护。
+  自定义 tabBar 本身是普通组件层（z-index 足够高），用 view 即可。
+-->
+<view class="tab-bar">
+  <view
+    class="tab-item {{selected === index ? 'tab-item-active' : ''}}"
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    data-index="{{index}}"
+    bindtap="onTap"
+  >
+    <view class="tab-icon-wrap">
+      <view class="tab-icon">{{item.icon}}</view>
+    </view>
+    <view class="tab-text">{{item.text}}</view>
+  </view>
+</view>

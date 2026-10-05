@@ -1,0 +1,94 @@
+<!--pages/merchant/goods/goods.wxml — 商品管理-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <!-- 标题居中 -->
+  <view class="page-header-center">
+    <text class="page-title-center">商品管理</text>
+  </view>
+
+  <!-- 搜索栏：名称快搜 + 上下架筛选（小程序标准 input + picker） -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      type="text"
+      confirm-type="search"
+      placeholder="搜索商品名称"
+      placeholder-class="input-placeholder"
+      value="{{goodsName}}"
+      bindinput="onKeywordInput"
+      bindconfirm="handleSearch"
+    />
+    <picker class="filter-picker" mode="selector" range="{{launchOptions}}"
+      value="{{launchIndex}}" bindchange="onLaunchChange">
+      <view class="picker-btn">{{launchOptions[launchIndex]}} ▾</view>
+    </picker>
+  </view>
+
+  <!-- 第一行：搜索 / 重置 等宽并排，两个合力铺满整行 -->
+  <view class="toolbar">
+    <button class="btn btn-default" bindtap="handleSearch">搜索</button>
+    <button class="btn btn-default" bindtap="handleReset">重置</button>
+  </view>
+
+  <!-- 第二行：添加 独占一行 -->
+  <view class="toolbar">
+    <button class="btn btn-primary btn-block" bindtap="openAdd">＋ 添加商品</button>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="meta-row">
+    <text class="toolbar-info">
+      <block wx:if="{{total > 0}}">共 {{total}} 件商品</block>
+      <block wx:else>暂无商品</block>
+    </text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <!-- 商品列表：横向布局卡片（缩略图 + 信息 + 操作） -->
+  <view class="gc-card" wx:for="{{goodsList}}" wx:key="id">
+    <view class="gc-thumb">
+      <image wx:if="{{item.imagePath}}" class="gc-thumb-img" src="{{item.imagePath}}" mode="aspectFill" />
+      <text wx:else class="gc-thumb-ph">暂无图</text>
+    </view>
+
+    <view class="gc-main">
+      <view class="gc-title-row">
+        <text class="gc-name">{{item.goodsName}}</text>
+        <text class="tag {{item.launchNum === 1 ? 'tag-success' : 'tag-info'}}">
+          {{item.launchNum === 1 ? '已上架' : '已下架'}}
+        </text>
+      </view>
+      <text class="gc-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+      <view class="gc-meta">
+        <text class="gc-price">¥{{item.goodsPriceText}}</text>
+        <text class="gc-stock">库存 {{item.goodsStock}}</text>
+      </view>
+
+      <view class="gc-actions">
+        <button class="btn btn-sm btn-default" data-index="{{index}}" bindtap="openEdit">编辑</button>
+        <button class="btn btn-sm {{item.launchNum === 1 ? 'btn-warning' : 'btn-success'}}"
+          data-index="{{index}}" bindtap="handleToggleLaunch">
+          {{item.launchNum === 1 ? '下架' : '上架'}}
+        </button>
+        <button class="btn btn-sm btn-danger" data-index="{{index}}" bindtap="handleDelete">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !goodsList.length}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">暂无商品</text>
+    <button class="btn btn-sm btn-primary" bindtap="openAdd">添加第一个商品</button>
+  </view>
+
+  <view class="pagination" wx:if="{{pages > 1}}">
+    <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+    <text class="page-text">{{pageNum}} / {{pages}} 页</text>
+    <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

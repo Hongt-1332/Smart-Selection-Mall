@@ -1,0 +1,62 @@
+/* custom-tab-bar/index.wxss — 自定义 tabBar 样式
+ *
+ * 说明：cover-view 支持的选择器有限（不支持伪元素、部分属性），
+ * 因此图标直接用文本符号渲染，靠 font-size / color 控制外观。
+ */
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* 必须足够高，压过页面容器的 z-index:2 与弹层 z-index:1000，
+     否则 tabBar 会被页面内容盖住 → 表现为「导航栏点不了」 */
+  z-index: 10000;
+  display: flex;
+  height: 110rpx;
+  /* 适配 iPhone 底部安全区 */
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #10121a;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.08);
+  /* 保证整条 tabBar 都能接收点击 */
+  box-sizing: content-box;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  /* 显式声明可点击，避免被上层元素吃掉事件 */
+  pointer-events: auto;
+}
+
+.tab-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-icon {
+  font-size: 40rpx;
+  line-height: 1;
+  color: #8890a0;
+}
+
+.tab-text {
+  font-size: 19rpx;
+  line-height: 1;
+  color: #8890a0;
+}
+
+/* 选中态：文字与符号变主题蓝，并轻微放大 */
+.tab-item-active .tab-icon {
+  color: #5b9eff;
+}
+
+.tab-item-active .tab-text {
+  color: #5b9eff;
+}

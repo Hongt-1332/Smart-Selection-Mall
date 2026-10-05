@@ -1,0 +1,185 @@
+<!--pages/ai-recommend/ai-recommend.wxml — 智能推荐（tabBar 页）-->
+<!-- 全站星空背景 -->
+<background-effects star-count="32" meteor-count="18" />
+
+<view class="chat-page">
+  <!-- 聊天头部 -->
+  <view class="chat-header">
+    <view class="header-left">
+      <view class="status-dot"></view>
+      <text>智能推荐</text>
+    </view>
+    <view class="header-right">
+      <button class="btn btn-sm btn-default" bindtap="handleNewChat">+ 新对话</button>
+    </view>
+  </view>
+
+  <!-- 消息区（固定高度，内部滚动） -->
+  <scroll-view class="messages-container" scroll-y scroll-into-view="{{scrollIntoView}}"
+    scroll-with-animation>
+    <view class="message-row {{item.role}}" wx:for="{{messages}}" wx:key="index">
+      <view class="avatar-wrap">
+        <view class="avatar {{item.role}}">{{item.role === 'user' ? '👤' : '🤖'}}</view>
+      </view>
+      <view class="bubble-wrap">
+        <view class="bubble {{item.role}}">
+          <text class="bubble-text">{{item.content}}</text>
+        </view>
+        <text class="msg-time">{{item.time}}</text>
+      </view>
+    </view>
+
+    <!-- 思考中 -->
+    <view class="message-row ai" wx:if="{{isThinking}}">
+      <view class="avatar-wrap">
+        <view class="avatar ai">🤖</view>
+      </view>
+      <view class="bubble-wrap">
+        <view class="bubble ai">
+          <text class="bubble-text">正在思考中...</text>
+        </view>
+      </view>
+    </view>
+
+    <view id="msg-bottom" class="msg-bottom"></view>
+  </scroll-view>
+
+  <!-- 快捷标签（未提问时展示，提问后收起以节省空间）
+       用 swiper 承载，避免 scroll-view 横向滚动的原生滚动条与手势冲突 -->
+  <swiper class="quick-actions" wx:if="{{!hasQueried}}" circular="{{false}}"
+    display-multiple-items="{{2}}" duration="300">
+    <swiper-item class="quick-item" wx:for="{{quickTags}}" wx:key="*this">
+      <view class="quick-btn" data-tag="{{item}}" bindtap="quickSend">{{item}}</view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 输入区：示例文案精简到一行显示 -->
+  <view class="input-wrapper">
+    <input class="chat-input" placeholder="描述需求，如：蓝牙耳机"
+      placeholder-class="input-placeholder" value="{{input}}" bindinput="onInput"
+      confirm-type="send" bindconfirm="send" maxlength="200" />
+    <button class="send-btn" bindtap="send" disabled="{{!input || loading}}">发送</button>
+  </view>
+
+  <!-- 推荐结果 -->
+  <view class="recommend-panel">
+    <view class="panel-header">
+      <text class="panel-title">✨ 为你精选</text>
+      <text class="panel-sub">{{hasQueried ? recItems.length + ' 件匹配' : '店内热销推荐'}}</text>
+    </view>
+
+    <!-- 未提问：与首页「推荐商品」完全一致的卡片格式 -->
+    <block wx:if="{{!hasQueried}}">
+      <swiper class="rec-swiper" wx:if="{{previewGoods.length}}"
+        circular="{{previewGoods.length > 1}}"
+        previous-margin="0"
+        next-margin="60rpx"
+        duration="400"
+        bindchange="onPreviewChange">
+        <swiper-item class="rec-item" wx:for="{{previewGoods}}" wx:key="id">
+          <view class="goods-card" data-id="{{item.id}}" bindtap="goDetail">
+            <view class="goods-img-wrap">
+              <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imagePath}}" mode="aspectFill" />
+              <text wx:else class="goods-img-placeholder">暂无图片</text>
+            </view>
+            <view class="goods-info">
+              <text class="goods-name">{{item.goodsName}}</text>
+              <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+
+              <view class="goods-price-row">
+                <text class="goods-price">¥{{item.goodsPriceText}}</text>
+                <text class="goods-stock">库存 {{item.goodsStock}}</text>
+              </view>
+
+              <view class="merchant-info" wx:if="{{item.userName}}"
+                data-id="{{item.merchantId || item.userId}}" catchtap="goMerchant">
+                <view class="merchant-avatar">
+                  <image wx:if="{{item.merchantAvatar}}" class="avatar-img" src="{{item.merchantAvatar}}" mode="aspectFill" />
+                  <text wx:else class="avatar-ph">👤</text>
+                </view>
+                <text class="merchant-name">{{item.userName}}</text>
+              </view>
+
+              <view class="goods-actions">
+                <text class="goods-added" wx:if="{{item.cartQuantity > 0}}">🛒 已购 {{item.cartQuantity}}</text>
+                <text class="goods-added-ph" wx:else>未购买</text>
+                <text class="goods-detail-hint">详情 ›</text>
+              </view>
+            </view>
+          </view>
+        </swiper-item>
+      </swiper>
+
+      <!-- 指示点 -->
+      <view class="rec-dots" wx:if="{{previewGoods.length > 1}}">
+        <view class="rec-dot {{previewIdx === index ? 'rec-dot-active' : ''}}"
+          wx:for="{{previewGoods}}" wx:key="id"></view>
+      </view>
+
+      <view class="panel-empty" wx:if="{{!previewGoods.length}}">
+        <text class="placeholder-icon">📦</text>
+        <text class="placeholder-title">暂无在售商品</text>
+      </view>
+    </block>
+
+    <!-- 有结果：横向滑动浏览（swiper 一屏一卡） -->
+    <view wx:elif="{{recItems.length > 0}}">
+      <swiper
+        class="rec-swiper"
+        previous-margin="0"
+        next-margin="80rpx"
+        circular="{{recItems.length > 1}}"
+        duration="400"
+        bindchange="onRecChange"
+      >
+        <swiper-item class="rec-item" wx:for="{{recItems}}" wx:key="goodsId">
+          <view class="goods-card" data-id="{{item.goodsId || item.id}}" bindtap="goDetail">
+            <view class="goods-img-wrap">
+              <image wx:if="{{item.imagePath}}" class="goods-img" src="{{item.imagePath}}" mode="aspectFill" />
+              <text wx:else class="goods-img-placeholder">暂无图片</text>
+              <text class="card-badge" wx:if="{{index === recIdx}}">首推</text>
+            </view>
+            <view class="goods-info">
+              <text class="goods-name">{{item.goodsName}}</text>
+              <text class="goods-desc" wx:if="{{item.describe}}">{{item.describe}}</text>
+              <view class="goods-price-row">
+                <text class="goods-price">¥{{item.goodsPriceText}}</text>
+                <text class="goods-stock">库存 {{item.goodsStock}}</text>
+              </view>
+
+              <view class="merchant-info" wx:if="{{item.userName}}" data-id="{{item.merchantId}}"
+                catchtap="goMerchant">
+                <view class="merchant-avatar">
+                  <text class="avatar-ph">👤</text>
+                </view>
+                <text class="merchant-name">{{item.userName}}</text>
+              </view>
+
+              <view class="goods-actions">
+                <text class="goods-added" wx:if="{{item.cartQuantity > 0}}">🛒 已购 {{item.cartQuantity}} 件</text>
+                <text class="goods-added-ph" wx:else>未购买</text>
+                <text class="goods-detail-hint">查看详情 ›</text>
+              </view>
+            </view>
+          </view>
+        </swiper-item>
+      </swiper>
+
+      <!-- 指示点 -->
+      <view class="rec-dots" wx:if="{{recItems.length > 1}}">
+        <view class="rec-dot {{recIdx === index ? 'rec-dot-active' : ''}}"
+          wx:for="{{recItems}}" wx:key="goodsId"></view>
+      </view>
+    </view>
+
+    <!-- 无匹配 -->
+    <view class="panel-empty" wx:else>
+      <text class="placeholder-icon">📭</text>
+      <text class="placeholder-title">暂无匹配</text>
+      <text class="placeholder-desc">换个说法再试试，比如描述用途或预算</text>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

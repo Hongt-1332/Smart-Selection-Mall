@@ -1,0 +1,103 @@
+<!--pages/merchant/goods-edit/goods-edit.wxml — 商品发布 / 编辑（独立页面）-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+
+<!-- 页面容器：底部预留固定提交栏的高度，避免内容被遮住 -->
+<view class="page edit-page">
+  <view class="page-header-center">
+    <text class="page-title-center">{{isEdit ? '编辑商品' : '发布商品'}}</text>
+  </view>
+
+  <!-- 表单卡片 -->
+  <view class="form-card">
+    <!-- 表单完整性提示：放在最顶部，一眼看出还差什么，不用靠 toast 猜 -->
+    <view class="checklist" wx:if="{{!canSubmit}}">
+      <text class="checklist-title">还差以下内容才能提交：</text>
+      <text class="checklist-item" wx:for="{{missingItems}}" wx:key="*this">· {{item}}</text>
+    </view>
+
+    <view class="field">
+      <text class="field-label">商品名称</text>
+      <input class="input" placeholder="请输入商品名称" placeholder-class="input-placeholder"
+        value="{{form.goodsName}}" data-field="goodsName" bindinput="onFormInput" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">商品描述</text>
+      <textarea class="textarea" placeholder="简单介绍这件商品" placeholder-class="input-placeholder"
+        value="{{form.describe}}" data-field="describe" bindinput="onFormInput" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">价格（元）</text>
+      <input class="input" type="digit" placeholder="请输入价格，如 9.90" placeholder-class="input-placeholder"
+        value="{{form.goodsPrice}}" data-field="goodsPrice" bindinput="onNumberInput" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">库存（件）</text>
+      <input class="input" type="number" placeholder="请输入库存数量" placeholder-class="input-placeholder"
+        value="{{form.goodsStock}}" data-field="goodsStock" bindinput="onNumberInput" />
+    </view>
+
+    <!-- 发货地址：仅新增时可选（后端 updateGoods 不接受改地址） -->
+    <view class="field" wx:if="{{!isEdit}}">
+      <text class="field-label">发货地址</text>
+
+      <view class="dropdown">
+        <view class="dropdown-trigger {{addressIndex >= 0 ? 'dropdown-trigger-filled' : ''}}"
+          bindtap="toggleAddrDropdown">
+          <text class="dropdown-text {{addressIndex >= 0 ? '' : 'dropdown-placeholder'}}">
+            {{addressIndex >= 0 ? addressLabels[addressIndex] : (addressLabels.length ? '请选择发货地址' : '暂无可用地址')}}
+          </text>
+          <text class="dropdown-arrow {{addrDropdownOpen ? 'dropdown-arrow-up' : ''}}">▾</text>
+        </view>
+
+        <view class="dropdown-list" wx:if="{{addrDropdownOpen}}">
+          <view class="dropdown-item {{addressIndex === index ? 'dropdown-item-active' : ''}}"
+            wx:for="{{addressLabels}}" wx:key="index"
+            data-index="{{index}}" bindtap="onAddressSelect">
+            <view class="addr-radio {{addressIndex === index ? 'addr-radio-on' : ''}}"></view>
+            <text class="dropdown-item-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <text class="field-hint" wx:if="{{!addressLabels.length}}">
+        请先到「用户中心 → 收货地址」添加一条地址，再回来发布商品
+      </text>
+    </view>
+
+    <!-- 商品图片 -->
+    <view class="field">
+      <text class="field-label">{{isEdit ? '商品图片（暂不支持修改）' : '商品图片'}}</text>
+
+      <view class="img-picker" wx:if="{{selectedFile}}">
+        <image class="img-preview" src="{{selectedFile}}" mode="aspectFill"
+          data-src="{{selectedFile}}" bindtap="previewImage" />
+        <view class="img-actions">
+          <button class="btn img-btn img-btn-view" bindtap="chooseImage">重新选择</button>
+          <button class="btn img-btn img-btn-del" bindtap="clearImage">删除</button>
+        </view>
+        <text class="field-hint-plain">点击图片可放大查看</text>
+      </view>
+
+      <view class="upload-row" wx:else>
+        <button class="btn btn-sm btn-primary" bindtap="chooseImage">选择图片</button>
+        <text class="upload-hint">支持 jpg / png</text>
+      </view>
+
+      <text class="field-hint" wx:if="{{!isEdit && !selectedFile}}">发布商品必须选择一张图片</text>
+    </view>
+  </view>
+</view>
+
+<!-- 底部固定提交栏：贴底 + 安全区，永远可见 -->
+<view class="submit-bar">
+  <button class="btn submit-main" bindtap="handleSave" disabled="{{saveLoading}}">
+    {{saveLoading ? '提交中...' : (isEdit ? '保存修改' : '发布商品')}}
+  </button>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

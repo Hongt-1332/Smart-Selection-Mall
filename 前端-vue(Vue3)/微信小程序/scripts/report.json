@@ -1,0 +1,195 @@
+[
+  {
+    "page": "pages/index/index",
+    "checks": {
+      "pageHeight": null,
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [
+      {
+        "type": "info",
+        "args": [
+          "Lazy code loading is enabled. Only injecting required components."
+        ]
+      }
+    ],
+    "error": null
+  },
+  {
+    "page": "pages/login/login",
+    "checks": {
+      "pageHeight": null,
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": null
+    },
+    "console": [],
+    "error": "timeout waiting for automator response"
+  },
+  {
+    "page": "pages/about/about",
+    "checks": {},
+    "console": [],
+    "error": "timeout waiting for automator response"
+  },
+  {
+    "page": "pages/ai-recommend/ai-recommend",
+    "checks": {
+      "pageHeight": null,
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/background/background",
+    "checks": {
+      "pageHeight": null,
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": "rgba(14, 16, 24, 0.55)",
+      "btnBoxSizing": null
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/goods/goods",
+    "checks": {
+      "pageHeight": "671.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/cart/cart",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/address/address",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/trade/trade",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/info/info",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/bg/bg",
+    "checks": {
+      "pageHeight": null,
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/vip/vip",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": null
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/user/merchant/merchant?userId=1",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/merchant/goods/goods",
+    "checks": {
+      "pageHeight": "671.333px",
+      "inputBoxSizing": "border-box",
+      "inputWidth": "114px",
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/merchant/trade/trade",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  },
+  {
+    "page": "pages/merchant/ai/ai",
+    "checks": {
+      "pageHeight": "753.333px",
+      "inputBoxSizing": null,
+      "inputWidth": null,
+      "cardBg": null,
+      "btnBoxSizing": "border-box"
+    },
+    "console": [],
+    "error": null
+  }
+]

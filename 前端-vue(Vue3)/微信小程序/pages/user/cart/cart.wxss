@@ -1,0 +1,386 @@
+/* pages/user/cart/cart.wxss
+ * 颜色统一使用 app.wxss 的主题变量。
+ * 布局：横向卡片列表（选择框 + 缩略图 + 信息 + 操作）+ 底部固定结算栏。
+ */
+
+/* 底部给固定结算栏留出空间（两行栏 ≈ 220rpx，留足余量） */
+.cart-page {
+  padding-bottom: calc(300rpx + env(safe-area-inset-bottom));
+}
+
+/* ===== 复选框 ===== */
+.checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--border-strong);
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.checkbox-checked {
+  background: var(--brand-deep);
+  border-color: var(--brand-deep);
+}
+
+.checkbox-mark {
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ===== 购物车卡片 =====
+ * 卡片竖排：上=图文信息，下=操作行。
+ * 关键：操作行必须放在 .ct-top 之外，才能占满整卡宽度；
+ * 之前它嵌在 .ct-main 里，被图片挤成窄列导致按钮变形。
+ */
+.ct-item {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 20rpx;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* 上半区：选择框 + 图片 + 文字信息（横向） */
+.ct-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 18rpx;
+}
+
+/* 选中态：整体描边高亮 */
+.ct-item-selected {
+  border-color: var(--brand-deep);
+  box-shadow: 0 0 0 2rpx rgba(91, 141, 239, 0.25);
+}
+
+/* 选择框：与图片垂直居中对齐 */
+.ct-check {
+  display: flex;
+  align-items: center;
+  height: 160rpx;
+  flex-shrink: 0;
+}
+
+.ct-thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 14rpx;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ct-thumb-img { width: 100%; height: 100%; }
+
+.ct-thumb-ph {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+/* 主体：占满图片右侧剩余宽度 */
+.ct-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.ct-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.ct-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ct-desc {
+  font-size: 23rpx;
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 价格行：单价 + 库存 */
+.ct-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+
+.ct-price {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--danger);
+  flex-shrink: 0;
+}
+
+.ct-stock {
+  font-size: 23rpx;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* 小计行：单独一行，左标签右金额 */
+.ct-sum-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.ct-sum-label {
+  font-size: 22rpx;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.ct-sum-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--warning);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ===== 商户行 ===== */
+.ct-merchant {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 4rpx 0;
+}
+
+.ct-merchant-avatar {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-img { width: 100%; height: 100%; }
+.avatar-ph { font-size: 22rpx; }
+
+.ct-merchant-name {
+  font-size: 23rpx;
+  color: var(--text-regular);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ===== 操作行：占满整卡宽度，数量靠左、删除靠右 ===== */
+.ct-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  width: 100%;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--border-base);
+}
+
+/* 数量控制容器：不参与伸缩，避免窄屏被压扁 */
+.ct-actions .qty-control {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* 数量按钮：小程序原生 button 自带 min-width/padding，
+   必须显式覆盖，否则会撑成巨型方块 */
+.ct-actions .qty-btn {
+  width: 52rpx;
+  height: 52rpx;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: 1rpx solid var(--border-strong);
+  border-radius: 8rpx;
+  background: var(--bg-input);
+  color: var(--text-regular);
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ct-actions .qty-btn::after { border: none; }
+
+.ct-actions .qty-btn[disabled] {
+  opacity: 0.35;
+}
+
+.ct-actions .qty-num {
+  width: 64rpx;
+  height: 52rpx;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 删除按钮：固定尺寸，不随容器伸缩 */
+.ct-del {
+  flex-shrink: 0;
+  width: 120rpx;
+  height: 52rpx;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 10rpx;
+  background: rgba(245, 108, 108, 0.12);
+  border: 1rpx solid rgba(245, 108, 108, 0.3);
+  color: var(--danger);
+  font-size: 23rpx;
+  line-height: 50rpx;
+}
+
+.ct-del::after { border: none; }
+
+/* ===== 底部固定结算栏（两行布局，窄屏也能放下） ===== */
+.cart-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  padding: 18rpx 24rpx;
+  padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
+  background: rgba(20, 22, 30, 0.96);
+  border-top: 1rpx solid var(--border-base);
+}
+
+/* 每一行内部两端对齐 */
+.cb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  width: 100%;
+}
+
+.cb-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.cb-label {
+  font-size: 26rpx;
+  color: var(--text-regular);
+}
+
+/* 合计金额靠右 */
+.cb-total {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10rpx;
+}
+
+.cb-total-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.cb-total-value {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--danger);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 结算按钮：占据第二行剩余宽度
+ * 需覆盖全局 .btn 的 inline-flex / padding，否则无法填满 */
+.cb-btn {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  height: 76rpx;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.cb-btn[disabled] {
+  opacity: 0.45;
+}
+
+/* 批量删除按钮：第二行左侧，固定宽度不撑破 */
+.cb-del-btn {
+  flex: 0 0 200rpx;
+  height: 76rpx;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 12rpx;
+  background: rgba(245, 108, 108, 0.12);
+  border: 1rpx solid rgba(245, 108, 108, 0.3);
+  color: var(--danger);
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 74rpx;
+  text-align: center;
+}
+
+.cb-del-btn::after { border: none; }
+
+.cb-del-btn[disabled] {
+  opacity: 0.35;
+}

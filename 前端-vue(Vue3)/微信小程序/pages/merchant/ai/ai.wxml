@@ -1,0 +1,118 @@
+<!--pages/merchant/ai/ai.wxml — AI上传-->
+<!-- 全站星空背景 -->
+<background-effects star-count="36" meteor-count="20" />
+<view class="page">
+  <!-- 标题居中 -->
+  <view class="page-header-center">
+    <text class="page-title-center">AI上传</text>
+  </view>
+
+  <!-- 新增AI 独占一行 -->
+  <view class="toolbar">
+    <button class="btn btn-primary btn-block" bindtap="openAdd">＋ 新增AI</button>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="meta-row">
+    <text class="toolbar-info">
+      <block wx:if="{{total > 0}}">共 {{total}} 条</block>
+      <block wx:else>暂无</block>
+    </text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <view class="ai-card" wx:for="{{aiList}}" wx:key="id">
+    <view class="ai-head">
+      <text class="ai-name">{{item.name}}</text>
+      <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+    </view>
+
+    <view class="ai-row">
+      <text class="ai-label">ID</text>
+      <text class="ai-value">{{item.id}}</text>
+    </view>
+    <view class="ai-row">
+      <text class="ai-label">分类 / 种类</text>
+      <text class="ai-value">{{item.category}} / {{item.kind}}</text>
+    </view>
+    <view class="ai-row">
+      <text class="ai-label">价格</text>
+      <text class="ai-value text-danger">¥{{item.priceText}}</text>
+    </view>
+    <view class="ai-row">
+      <text class="ai-label">简述</text>
+      <text class="ai-value">{{item.simpleDescription}}</text>
+    </view>
+    <view class="ai-row">
+      <text class="ai-label">特点</text>
+      <text class="ai-value">{{item.features}}</text>
+    </view>
+
+    <view class="ai-actions" wx:if="{{!item.delete}}">
+      <button class="btn btn-sm btn-primary" data-index="{{index}}" bindtap="openEdit">编辑</button>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !aiList.length}}">
+    <text class="empty-icon">🤖</text>
+    <text class="empty-text">暂无AI</text>
+  </view>
+
+  <view class="pagination" wx:if="{{total > 0}}">
+    <button class="btn btn-sm btn-default" bindtap="prevPage" disabled="{{pageNum <= 1}}">上一页</button>
+    <text class="page-text">{{pageNum}} / {{pages}} 页 · 共 {{total}} 条</text>
+    <button class="btn btn-sm btn-default" bindtap="nextPage" disabled="{{pageNum >= pages}}">下一页</button>
+  </view>
+</view>
+
+<!-- 新增/编辑弹窗 -->
+<view class="sheet-mask" wx:if="{{dialogVisible}}" bindtap="closeDialog">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">{{isEdit ? '编辑AI' : '新增AI'}}</text>
+      <text class="modal-close" bindtap="closeDialog">✕</text>
+    </view>
+    <view class="sheet-body">
+      <view class="field" wx:if="{{!isEdit}}">
+        <text class="field-label">关联商品</text>
+        <picker mode="selector" range="{{goodsLabels}}" value="{{goodsIndex}}" bindchange="onGoodsChange">
+          <view class="input picker-value">{{goodsIndex >= 0 ? goodsLabels[goodsIndex] : '选择关联商品'}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="field-label">分类</text>
+        <input class="input" value="{{form.category}}" data-field="category" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">种类</text>
+        <input class="input" value="{{form.kind}}" data-field="kind" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">名称</text>
+        <input class="input" value="{{form.name}}" data-field="name" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">价格</text>
+        <input class="input" type="digit" value="{{form.price}}" data-field="price" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">简述</text>
+        <textarea class="textarea" value="{{form.simpleDescription}}" data-field="simpleDescription" bindinput="onFormInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">特点</text>
+        <textarea class="textarea" value="{{form.features}}" data-field="features" bindinput="onFormInput" />
+      </view>
+    </view>
+    <view class="sheet-footer">
+      <button class="btn btn-default flex-1" bindtap="closeDialog">取消</button>
+      <button class="btn btn-primary flex-1" bindtap="handleSave" disabled="{{saveLoading}}">
+        {{saveLoading ? '保存中...' : '保存'}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

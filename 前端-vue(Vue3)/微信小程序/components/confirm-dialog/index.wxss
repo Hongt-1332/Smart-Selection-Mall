@@ -1,0 +1,101 @@
+/* components/confirm-dialog/index.wxss
+ * 深色主题确认弹窗。配色全部走 app.wxss 的 CSS 变量，
+ * 组件使用 styleIsolation: apply-shared 以便继承页面的 :root 变量。
+ */
+
+.cd-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 48rpx;
+  padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.cd-box {
+  width: 100%;
+  max-width: 620rpx;
+  background: #14161e;                    /* 实色底，避免透出页面玻璃质感 */
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  border-radius: 24rpx;
+  padding: 44rpx 40rpx 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.5);
+}
+
+.cd-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #f1f2f4;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.cd-message {
+  font-size: 28rpx;
+  line-height: 1.65;
+  color: #c0c4cc;
+  text-align: center;
+  word-break: break-word;
+  margin-bottom: 12rpx;
+}
+
+/* ===== 按钮区 ===== */
+.cd-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20rpx;
+  width: 100%;
+  margin-top: 36rpx;
+}
+
+/* 关键：小程序原生 button 需显式覆盖 display/padding/min-width */
+.cd-btn {
+  display: flex;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 80rpx;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1;
+  border: none;
+}
+
+.cd-btn::after { border: none; }
+
+/* 取消：次要操作，暗色底 */
+.cd-btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.12);
+  color: #c0c4cc;
+}
+
+/* 确认：主操作，主题色 */
+.cd-btn-confirm {
+  background: #5b9eff;
+  color: #ffffff;
+}
+
+/* 确认（危险）：删除类操作 */
+.cd-btn-danger {
+  background: #f56c6c;
+  color: #ffffff;
+}

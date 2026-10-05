@@ -1,0 +1,250 @@
+<!--pages/goods-detail/goods-detail.wxml — 商品详情（点击商品卡进入）-->
+<background-effects star-count="30" meteor-count="16" />
+
+<view class="page detail-page">
+  <!-- 演示数据提示 -->
+  <view class="demo-tip" wx:if="{{isDemo}}">
+    <text>🧪 当前为内置演示商品（接口未连接），购买与加购为本地模拟</text>
+  </view>
+
+  <!-- 缓存兜底提示 -->
+  <view class="cache-tip" wx:if="{{usingCache}}">
+    <text>⚠️ 网络不可用，正在展示本地缓存的信息</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <block wx:if="{{!loading && goods}}">
+    <!-- 图片区 -->
+    <view class="hero-img-wrap">
+      <image wx:if="{{goods.imagePath}}" class="hero-img" src="{{goods.imagePath}}" mode="aspectFill"
+        bindtap="previewImage" />
+      <view wx:else class="hero-placeholder">
+        <text class="hero-ph-icon">📦</text>
+        <text class="hero-ph-text">暂无图片</text>
+      </view>
+    </view>
+
+    <!-- 价格与名称 -->
+    <view class="card main-card">
+      <view class="price-row">
+        <text class="detail-price">¥{{goods.goodsPriceText}}</text>
+        <text class="tag {{goods.goodsStock > 0 ? 'tag-success' : 'tag-danger'}}">
+          {{goods.goodsStock > 0 ? '库存 ' + goods.goodsStock : '已售罄'}}
+        </text>
+      </view>
+      <text class="detail-name">{{goods.goodsName}}</text>
+      <text class="detail-desc" wx:if="{{goods.describe}}">{{goods.describe}}</text>
+    </view>
+
+    <!-- 商家信息 -->
+    <view class="card merchant-card" data-id="{{goods.merchantId || goods.userId}}" bindtap="goMerchant">
+      <view class="merchant-avatar">
+        <image wx:if="{{merchantAvatar}}" class="avatar-img" src="{{merchantAvatar}}" mode="aspectFill" />
+        <text wx:else class="avatar-ph">👤</text>
+      </view>
+      <view class="merchant-detail">
+        <text class="merchant-name">{{goods.userName}}</text>
+        <text class="merchant-addr" wx:if="{{goods.address}}">📍 {{goods.address}}</text>
+      </view>
+      <text class="merchant-arrow">查看店铺 ›</text>
+    </view>
+
+    <!-- 商品信息明细 -->
+    <view class="card">
+      <text class="card-hd">📋 商品信息</text>
+      <view class="kv-row">
+        <text class="kv-label">商品编号</text>
+        <text class="kv-value">{{goods.id}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">销售价</text>
+        <text class="kv-value">¥{{goods.goodsPriceText}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">剩余库存</text>
+        <text class="kv-value">{{goods.goodsStock}} 件</text>
+      </view>
+      <view class="kv-row" wx:if="{{goods.address}}">
+        <text class="kv-label">发货地</text>
+        <text class="kv-value">{{goods.address}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">所属商家</text>
+        <text class="kv-value">{{goods.userName}}</text>
+      </view>
+    </view>
+
+    <!-- 购物车数量 -->
+    <view class="card">
+      <text class="card-hd">🛒 加入购物车</text>
+      <view class="qty-row">
+        <view class="qty-control-sm">
+          <button class="qty-btn" bindtap="onDecrease">−</button>
+          <text class="qty-num {{cartQuantity > 0 ? 'qty-num-active' : ''}}">{{cartQuantity}}</text>
+          <button class="qty-btn" bindtap="onIncrease">+</button>
+        </view>
+        <text class="qty-hint">{{submitting ? '⏳ 同步中...' : (cartQuantity > 0 ? '已加入购物车' : '未加入')}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 商品不存在 -->
+  <view class="empty" wx:if="{{!loading && !goods}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">商品信息不存在或已下架</text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="detail-bar" wx:if="{{!loading && goods}}">
+    <view class="bar-left">
+      <text class="bar-price">¥{{goods.goodsPriceText}}</text>
+      <text class="bar-stock">库存 {{goods.goodsStock}}</text>
+    </view>
+    <button class="btn btn-gradient bar-buy" bindtap="openBuy" disabled="{{goods.goodsStock <= 0}}">
+      {{goods.goodsStock > 0 ? '立即购买' : '已售罄'}}
+    </button>
+  </view>
+</view>
+
+<!-- 购买弹窗 -->
+<view class="sheet-mask" wx:if="{{buyVisible}}" bindtap="closeBuy">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">确认购买</text>
+      <text class="modal-close" bindtap="closeBuy">✕</text>
+    </view>
+
+    <view class="sheet-body" wx:if="{{goods}}">
+      <view class="buy-goods">
+        <view class="buy-goods-img">
+          <image wx:if="{{goods.imagePath}}" src="{{goods.imagePath}}" mode="aspectFill" class="buy-goods-image" />
+          <text wx:else>📦</text>
+        </view>
+        <view class="buy-goods-info">
+          <text class="buy-goods-name">{{goods.goodsName}}</text>
+          <text class="buy-goods-price">¥{{goods.goodsPriceText}}</text>
+        </view>
+      </view>
+
+      <view class="buy-field">
+        <text class="buy-field-label">数量</text>
+        <view class="qty-control">
+          <button class="qty-btn" bindtap="onBuyQtyMinus">−</button>
+          <text class="qty-num">{{buyQty}}</text>
+          <button class="qty-btn" bindtap="onBuyQtyPlus">+</button>
+        </view>
+        <text class="buy-field-extra">库存 {{goods.goodsStock}}</text>
+      </view>
+
+      <view class="buy-field buy-field-addr">
+        <text class="buy-field-label">地址</text>
+        <view class="buy-addr" bindtap="openAddrSheet">
+          <text class="buy-addr-text {{selectedAddressText ? '' : 'text-muted'}}">
+            {{selectedAddressText || (addressLoading ? '加载中...' : '请选择收货地址')}}
+          </text>
+          <text class="buy-addr-change">{{selectedAddressText ? '更换' : '选择'}}</text>
+        </view>
+      </view>
+
+      <view class="buy-summary">
+        <view class="buy-summary-row">
+          <text>商品单价</text>
+          <text>¥{{goods.goodsPriceText}}</text>
+        </view>
+        <view class="buy-summary-row">
+          <text>购买数量</text>
+          <text>×{{buyQty}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="buy-summary-row buy-summary-total">
+          <text>合计</text>
+          <text class="buy-total">¥{{totalPrice}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="sheet-footer">
+      <button class="btn btn-default flex-1" bindtap="closeBuy">取消</button>
+      <button class="btn btn-gradient flex-1" bindtap="handleBuyNow" disabled="{{!selectedAddressId || buyLoading}}">
+        {{buyLoading ? '购买中...' : '确认购买'}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 地址选择 -->
+<view class="sheet-mask" wx:if="{{addrVisible}}" bindtap="closeAddrSheet">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-header">
+      <text class="sheet-title">选择收货地址</text>
+      <text class="modal-close" bindtap="closeAddrSheet">✕</text>
+    </view>
+    <view class="sheet-body">
+      <!-- 内嵌新增地址表单 -->
+      <block wx:if="{{addrFormVisible}}">
+        <view class="field">
+          <text class="field-label">国家</text>
+          <input class="input" placeholder="请输入国家" placeholder-class="input-placeholder"
+            value="{{addrForm.country}}" data-field="country" bindinput="onAddrFormInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">省份</text>
+          <input class="input" placeholder="省份/州" placeholder-class="input-placeholder"
+            value="{{addrForm.province}}" data-field="province" bindinput="onAddrFormInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">城市</text>
+          <input class="input" placeholder="城市" placeholder-class="input-placeholder"
+            value="{{addrForm.city}}" data-field="city" bindinput="onAddrFormInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">区县</text>
+          <input class="input" placeholder="区/县" placeholder-class="input-placeholder"
+            value="{{addrForm.county}}" data-field="county" bindinput="onAddrFormInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">详细地址</text>
+          <textarea class="textarea" placeholder="街道、门牌号等" placeholder-class="input-placeholder"
+            value="{{addrForm.detail}}" data-field="detail" bindinput="onAddrFormInput" />
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="loading" wx:if="{{addressLoading}}">加载中...</view>
+        <view class="empty" wx:elif="{{!addressList.length}}">
+          <text class="empty-text">暂无收货地址</text>
+        </view>
+        <view wx:else>
+          <view class="addr-item {{selectedAddressId === item.id ? 'addr-item-active' : ''}}"
+            wx:for="{{addressList}}" wx:key="id" data-index="{{index}}" bindtap="onSelectAddress">
+            <view class="addr-radio">
+              <view class="addr-dot" wx:if="{{selectedAddressId === item.id}}"></view>
+            </view>
+            <view class="flex-1">
+              <text class="addr-region">{{item.province}} {{item.city}} {{item.county}}</text>
+              <text class="addr-detail">{{item.detail}}</text>
+            </view>
+            <text class="tag tag-warning" wx:if="{{item.isDefault}}">默认</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="sheet-footer">
+      <block wx:if="{{addrFormVisible}}">
+        <button class="btn btn-default flex-1" bindtap="cancelAddrForm">返回列表</button>
+        <button class="btn btn-primary flex-1" bindtap="saveNewAddress" disabled="{{addrSaving}}">
+          {{addrSaving ? '保存中...' : '保存并使用'}}
+        </button>
+      </block>
+      <block wx:else>
+        <button class="btn btn-default flex-1" bindtap="closeAddrSheet">取消</button>
+        <button class="btn btn-gradient flex-1" bindtap="openAddrForm">＋ 新增地址</button>
+      </block>
+    </view>
+  </view>
+</view>
+
+<!-- 全局确认弹窗（深色主题，替代原生 wx.showModal） -->
+<confirm-dialog id="confirmDialog" />

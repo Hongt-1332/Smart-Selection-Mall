@@ -1,0 +1,85 @@
+/* pages/user/address/address.wxss
+ * 颜色统一使用 app.wxss 的主题变量，自动适配深色 / 浅色模式。
+ */
+.page-sub {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-top: 4rpx;
+}
+
+.address-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-base);
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 18rpx rgba(0, 0, 0, 0.05);
+}
+
+.address-card-default {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.address-card-default::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5rpx;
+  background: linear-gradient(90deg, #5b9eff, #5b8def);
+}
+
+.card-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  padding: 24rpx;
+}
+
+.field-row {
+  width: calc((100% - 10rpx) / 2);
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 12rpx 16rpx;
+  border-radius: 12rpx;
+  background: var(--bg-soft);
+}
+
+.field-row-detail {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.field-icon { font-size: 24rpx; flex-shrink: 0; }
+
+.field-label {
+  font-size: 22rpx;
+  color: var(--text-muted);
+  width: 56rpx;
+  flex-shrink: 0;
+}
+
+.field-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.field-value-wrap {
+  white-space: normal;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  padding: 18rpx 24rpx;
+  border-top: 1rpx solid var(--border-base);
+}
